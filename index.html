@@ -170,6 +170,8 @@ function parseClock(c){if(!/^\d{1,2}:\d{2}$/.test(c))return null;const[h,m]=c.sp
 function elapsed(s,e){const a=parseClock(s),b=parseClock(e);if(a===null||b===null)return null;let d=b-a;if(d<0)d+=24;return round(d,2)}
 function ufhDecay(h){if(h<.5)return 1;if(h<1)return .75;if(h<2)return .5;if(h<3)return .25;return .1}
 function scDecay(h){if(h<1)return 1;if(h<2)return .75;if(h<4)return .5;if(h<8)return .25;return .1}
+function fmtNum(v,d=0){return Number.isFinite(v)?round(v,d).toLocaleString('en-US'):'—'}
+function fmtDose(v,unit='',d=0){return Number.isFinite(v)?`${fmtNum(v,d)} ${unit}`.trim():'—'}
 
 const L={
 en:{
@@ -244,6 +246,7 @@ en:{
   durationThromb:'With thrombosis: 3-6 months',
   icuWarning:'Low 4Ts (0-3) may be UNSAFE for excluding HIT in critically ill and complicated patients. KCMH experience: 3/13 confirmed HIT patients had low 4Ts scores.',
   plateletRecovery:'~90% of confirmed HIT patients had platelet recovery shortly after switching to non-heparin anticoagulants. Immediate platelet response may support diagnosis.',
+  therapy:'Dosing & Orders',lmwhGuide:'LMWH / UFH Dosing Guide',agent:'Agent',indication:'Indication',prophylaxis:'Prophylaxis',treatment:'Treatment',context:'Clinical context',general:'General medical / surgical',ortho:'THR / TKR / hip fracture',startUFH:'Start UFH infusion',calcDose:'Calculated dose',renalNote:'Renal note',monitoringNote:'Monitoring note',practicalOrder:'Suggested order',antiXaNote:'Anti-Xa / monitoring',lmwhReference:'LMWH dosing adapted from uploaded handout.',therapyWeightNote:'Therapeutic LMWH should use actual body weight and should not be capped in this prototype.',renalModerate:'Moderate renal impairment may increase bleeding risk with full-dose LMWH; use caution and consider monitoring.',crclNeeded:'Enter age, weight, serum creatinine, and sex to calculate CrCl.',ufhNomogram:'UFH aPTT ratio adjustment',currentRate:'Current infusion rate (units/hr)',currentAptt:'Current aPTT ratio',nextStep:'Recommended adjustment',ufhCheck:'Recheck aPTT 6 hr after start or any dose change.',ufhTarget:'Target aPTT ratio approximately 1.5-2.5 in this prototype.',hold:'Hold infusion',noChange:'No change',increase:'Increase rate',decrease:'Decrease rate',bolus:'Bolus',targetRange:'Therapeutic range',lmwhOrderTitle:'LMWH / UFH Order',weightBased:'Weight-based calculation',dailyDose:'Daily dose',selectedDose:'Selected dose',contra:'Contraindication / caution',renalContraFond:'Fondaparinux contraindicated when CrCl <30 mL/min.',tinzLimit:'Tinzaparin: avoid / use specialist review when CrCl <20 mL/min.',bemiLimit:'Bemiparin: renal dose reduction when CrCl <30 mL/min.',enoxLimit:'Enoxaparin: reduce dose when CrCl <30 mL/min.',monitorRenal:'Consider anti-Xa monitoring when there is concern for bioaccumulation, renal impairment, extreme body weight, or bleeding risk.',initialUfhOrder:'Suggested initial UFH VTE order',ufhStartNote:'Prototype nomogram: 80 U/kg IV bolus then 18 U/kg/hr infusion unless contraindicated.',ratioBand1:'aPTT ratio <1.2: bolus 80 U/kg and increase by 4 U/kg/hr',ratioBand2:'aPTT ratio 1.2-1.49: bolus 40 U/kg and increase by 2 U/kg/hr',ratioBand3:'aPTT ratio 1.5-2.5: therapeutic, no change',ratioBand4:'aPTT ratio 2.51-3.0: decrease by 2 U/kg/hr',ratioBand5:'aPTT ratio >3.0: hold 1 hr, then decrease by 3 U/kg/hr',orderLabs:'CBC, PT/INR, aPTT, creatinine, platelet count baseline and serial monitoring',notRequired:'Routine monitoring usually not required',enoxaparin:'Enoxaparin',tinzaparin:'Tinzaparin',bemiparin:'Bemiparin',fondaparinux:'Fondaparinux',ufhTherapy:'UFH infusion',
 },
 th:{
   title:'โปรแกรมช่วยใช้ LMWH / Heparin & HIT',
@@ -316,6 +319,7 @@ th:{
   durationThromb:'มี thrombosis: ให้ 3-6 เดือน',
   icuWarning:'คะแนน 4Ts ต่ำ (0-3) อาจไม่ปลอดภัยในผู้ป่วยวิกฤต/ซับซ้อน ประสบการณ์จาก KCMH: 3/13 ราย HIT ที่ยืนยันแล้วมีคะแนน 4Ts ต่ำ',
   plateletRecovery:'~90% ของ HIT ที่ยืนยันแล้ว เกล็ดเลือดฟื้นตัวเร็วหลังเปลี่ยนเป็น non-heparin anticoagulant การตอบสนองทันทีช่วยสนับสนุนการวินิจฉัย',
+  therapy:'การให้ยาและคำสั่งใช้ยา',lmwhGuide:'คู่มือขนาดยา LMWH / UFH',agent:'ยา',indication:'ข้อบ่งใช้',prophylaxis:'ป้องกัน',treatment:'รักษา',context:'บริบททางคลินิก',general:'ผู้ป่วยอายุรกรรม/ศัลยกรรมทั่วไป',ortho:'THR / TKR / hip fracture',startUFH:'เริ่ม UFH infusion',calcDose:'ขนาดยาที่คำนวณได้',renalNote:'หมายเหตุเรื่องไต',monitoringNote:'หมายเหตุการติดตาม',practicalOrder:'คำสั่งใช้ยาที่แนะนำ',antiXaNote:'Anti-Xa / การติดตาม',lmwhReference:'ขนาดยา LMWH อ้างอิงตาม handout PDF ที่แนบ',therapyWeightNote:'LMWH ขนาดรักษาในโปรแกรมนี้คำนวณตาม actual body weight และไม่ตั้งเพดานขนาดยา',renalModerate:'ไตบกพร่องระดับปานกลางอาจเพิ่มความเสี่ยงเลือดออกเมื่อใช้ LMWH ขนาดรักษาเต็มขนาด ควรใช้ด้วยความระวังและพิจารณาติดตามเพิ่มเติม',crclNeeded:'กรอกอายุ น้ำหนัก serum creatinine และเพศ เพื่อคำนวณ CrCl',ufhNomogram:'การปรับ UFH ตาม aPTT ratio',currentRate:'อัตรา infusion ปัจจุบัน (units/ชม.)',currentAptt:'aPTT ratio ปัจจุบัน',nextStep:'คำแนะนำการปรับยา',ufhCheck:'ตรวจ aPTT ซ้ำ 6 ชม. หลังเริ่มหรือหลังปรับขนาดยา',ufhTarget:'เป้าหมาย aPTT ratio ใน prototype นี้ประมาณ 1.5-2.5',hold:'หยุดชั่วคราว',noChange:'ไม่ต้องปรับ',increase:'เพิ่มอัตรา',decrease:'ลดอัตรา',bolus:'Bolus',targetRange:'อยู่ในช่วงรักษา',lmwhOrderTitle:'คำสั่ง LMWH / UFH',weightBased:'คำนวณตามน้ำหนัก',dailyDose:'ขนาดยาต่อวัน',selectedDose:'ขนาดยาที่เลือก',contra:'ข้อห้ามใช้ / ข้อควรระวัง',renalContraFond:'Fondaparinux ห้ามใช้เมื่อ CrCl <30 mL/min',tinzLimit:'Tinzaparin: ควรหลีกเลี่ยงหรือปรึกษาผู้เชี่ยวชาญเมื่อ CrCl <20 mL/min',bemiLimit:'Bemiparin: ต้องลดขนาดยาเมื่อ CrCl <30 mL/min',enoxLimit:'Enoxaparin: ต้องปรับลดขนาดยาเมื่อ CrCl <30 mL/min',monitorRenal:'พิจารณา anti-Xa เมื่อกังวลการสะสมยา ไตบกพร่อง น้ำหนักตัวมาก/น้อยมาก หรือมีความเสี่ยงเลือดออก',initialUfhOrder:'คำสั่งเริ่ม UFH สำหรับ VTE',ufhStartNote:'nomogram prototype: bolus 80 U/kg IV แล้วตามด้วย 18 U/kg/hr หากไม่มีข้อห้าม',ratioBand1:'aPTT ratio <1.2: bolus 80 U/kg และเพิ่ม infusion 4 U/kg/hr',ratioBand2:'aPTT ratio 1.2-1.49: bolus 40 U/kg และเพิ่ม infusion 2 U/kg/hr',ratioBand3:'aPTT ratio 1.5-2.5: อยู่ในช่วงรักษา ไม่ต้องปรับ',ratioBand4:'aPTT ratio 2.51-3.0: ลด infusion 2 U/kg/hr',ratioBand5:'aPTT ratio >3.0: หยุด 1 ชม. แล้วลด infusion 3 U/kg/hr',orderLabs:'ติดตาม CBC, PT/INR, aPTT, creatinine, platelet count ทั้งก่อนเริ่มและระหว่างรักษา',notRequired:'โดยทั่วไปไม่ต้องติดตาม routine',enoxaparin:'Enoxaparin',tinzaparin:'Tinzaparin',bemiparin:'Bemiparin',fondaparinux:'Fondaparinux',ufhTherapy:'UFH infusion',
 }
 };
 
@@ -327,6 +331,7 @@ function App(){
   const[hepRate,setHepRate]=useState('');const[hepBolus,setHepBolus]=useState('');const[scDose,setScDose]=useState('');
   const[hrsSince,setHrsSince]=useState('');const[stopClk,setStopClk]=useState('');const[curClk,setCurClk]=useState('');const[apttR,setApttR]=useState('');
   const[enoxD,setEnoxD]=useState('');const[enoxH,setEnoxH]=useState('');
+  const[agent,setAgent]=useState('enoxaparin');const[indication,setIndication]=useState('treatment');const[context,setContext]=useState('general');const[ufhCurrentRate,setUfhCurrentRate]=useState('');const[ufhCurrentAptt,setUfhCurrentAptt]=useState('');
   const[fT,setFT]=useState({tc:'0',tm:'0',th:'0',oc:'0'});
   const[copied,setCopied]=useState(false);
   const t=L[lang];
@@ -343,6 +348,68 @@ function App(){
   },[route,hepRate,hepBolus,scDose,effH,hitSusp]);
   const apttSug=useMemo(()=>{const r=+apttR;if(!r)return null;return r<=1.2?t.apttNormal:t.apttHigh},[apttR,t]);
   const procAdv=useMemo(()=>({low:t.lowAdv,moderate:t.modAdv,high:t.highAdv,veryHigh:t.vhAdv}[procRisk]),[procRisk,t]);
+  const therapyCalc=useMemo(()=>{
+    const wt=+weight, cr=crcl;
+    if(!wt||wt<=0) return null;
+    const renal30 = Number.isFinite(cr) && cr < 30;
+    const renal20 = Number.isFinite(cr) && cr < 20;
+    const renModerate = Number.isFinite(cr) && cr >= 30 && cr <= 50;
+    if(agent==='ufhTherapy'){
+      const bolus = round(wt*80);
+      const rate = round(wt*18);
+      return {agent:'UFH', selected:`Bolus ${fmtNum(bolus)} units IV once, then ${fmtNum(rate)} units/hr IV infusion`, daily:`${fmtNum(rate*24)} units/day infusion`, order:[`Heparin ${fmtNum(bolus)} units IV bolus once`, `Then heparin infusion ${fmtNum(rate)} units/hr IV`], renal:'No LMWH renal adjustment; use aPTT-guided titration.', monitor:t.ufhCheck+' '+t.ufhTarget, caution:renModerate?t.renalModerate:''};
+    }
+    if(agent==='enoxaparin'){
+      if(indication==='prophylaxis'){
+        const dose = context==='ortho' ? (renal30? '30 mg SC OD':'30 mg SC BID') : (renal30? '30 mg SC OD':'40 mg SC OD');
+        return {agent:t.enoxaparin, selected:dose, daily: context==='ortho' ? (renal30?'30 mg/day':'60 mg/day') : (renal30?'30 mg/day':'40 mg/day'), order:[`Enoxaparin ${dose}`], renal:t.enoxLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renModerate?t.renalModerate:''};
+      }
+      const dose = renal30 ? `1 mg/kg SC OD = ${fmtNum(wt,1)} mg SC OD` : `1 mg/kg SC BID = ${fmtNum(wt,1)} mg SC BID`;
+      const daily = renal30 ? `${fmtNum(wt,1)} mg/day` : `${fmtNum(wt*2,1)} mg/day`;
+      return {agent:t.enoxaparin, selected:dose, daily, order:[`Enoxaparin ${dose}`], renal:t.enoxLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renModerate?t.renalModerate:''};
+    }
+    if(agent==='tinzaparin'){
+      if(indication==='prophylaxis'){
+        return {agent:t.tinzaparin, selected:'3,500 U SC OD or 4,500 U SC OD', daily:'3,500-4,500 U/day', order:['Tinzaparin 3,500 U SC OD (or 4,500 U SC OD by protocol)'], renal:t.tinzLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renal20?t.tinzLimit:(renModerate?t.renalModerate:'')};
+      }
+      const dose=round(wt*175);
+      return {agent:t.tinzaparin, selected:`175 IU/kg SC OD = ${fmtNum(dose)} IU SC OD`, daily:`${fmtNum(dose)} IU/day`, order:[`Tinzaparin ${fmtNum(dose)} IU SC OD`], renal:t.tinzLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renal20?t.tinzLimit:(renModerate?t.renalModerate:'')};
+    }
+    if(agent==='bemiparin'){
+      if(indication==='prophylaxis'){
+        const dose = renal30 ? '2,500 IU SC OD' : '3,500 IU SC OD';
+        return {agent:t.bemiparin, selected:dose, daily:dose.replace(' SC OD','/day'), order:[`Bemiparin ${dose}`], renal:t.bemiLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renModerate?t.renalModerate:''};
+      }
+      let dose;
+      if(renal30){
+        if(wt<=50) dose='3,500 IU SC OD';
+        else if(wt<=70) dose='5,000 IU SC OD';
+        else if(wt<=100) dose='7,500 IU SC OD';
+        else dose=`ลด 25% จากขนาดปกติ ≈ ${fmtNum(wt*115*0.75)} IU SC OD`;
+      } else {
+        if(wt<=50) dose='5,000 IU SC OD';
+        else if(wt<=70) dose='7,500 IU SC OD';
+        else if(wt<=100) dose='10,000 IU SC OD';
+        else dose=`115 IU/kg SC OD = ${fmtNum(wt*115)} IU SC OD`;
+      }
+      return {agent:t.bemiparin, selected:dose, daily:dose.replace(' SC OD','/day'), order:[`Bemiparin ${dose}`], renal:t.bemiLimit, monitor:t.notRequired+'. '+t.monitorRenal, caution:renModerate?t.renalModerate:''};
+    }
+    if(agent==='fondaparinux'){
+      if(renal30) return {agent:t.fondaparinux, selected:t.renalContraFond, daily:'—', order:[t.renalContraFond], renal:t.renalContraFond, monitor:t.notRequired, caution:t.renalContraFond};
+      const dose = indication==='prophylaxis' ? '2.5 mg SC OD' : (wt<50?'5 mg SC OD':wt<=100?'7.5 mg SC OD':'10 mg SC OD');
+      return {agent:t.fondaparinux, selected:dose, daily:dose.replace(' SC OD','/day'), order:[`Fondaparinux ${dose}`], renal:t.renalContraFond, monitor:t.notRequired, caution:''};
+    }
+    return null;
+  },[agent,indication,context,weight,crcl,t]);
+  const ufhAdj=useMemo(()=>{
+    const wt=+weight, rate=+ufhCurrentRate, ratio=+ufhCurrentAptt;
+    if(agent!=='ufhTherapy' || !wt || !ratio) return null;
+    if(ratio<1.2){const bol=round(wt*80), delta=round(wt*4); return {action:t.increase, text:t.ratioBand1, bolus:`${fmtNum(bol)} units`, newRate: rate? Math.max(0, round(rate+delta)) : null};}
+    if(ratio<1.5){const bol=round(wt*40), delta=round(wt*2); return {action:t.increase, text:t.ratioBand2, bolus:`${fmtNum(bol)} units`, newRate: rate? Math.max(0, round(rate+delta)) : null};}
+    if(ratio<=2.5){return {action:t.noChange, text:t.ratioBand3, bolus:'—', newRate: rate||null};}
+    if(ratio<=3){const delta=round(wt*2); return {action:t.decrease, text:t.ratioBand4, bolus:'—', newRate: rate? Math.max(0, round(rate-delta)) : null};}
+    const delta=round(wt*3); return {action:t.hold, text:t.ratioBand5, bolus:'—', newRate: rate? Math.max(0, round(rate-delta)) : null};
+  },[agent,weight,ufhCurrentRate,ufhCurrentAptt,t]);
   const scenAdv=useMemo(()=>{if(scenario==='major')return t.stopHeparin+' '+t.sourceControl;if(scenario==='urgent')return t.procedureNote+' '+procAdv;return t.overdoseNote},[scenario,t,procAdv]);
   const enoxProt=useMemo(()=>{const d=+enoxD,h=+enoxH;if(!d||h<0)return null;if(h<8)return round(d)+' mg';if(h<=12)return round(d*.5)+' mg';return lang==='en'?'Protamine may be of limited benefit':'Protamine อาจให้ประโยชน์จำกัด'},[enoxD,enoxH,lang]);
   const hitSc=useMemo(()=>+fT.tc+ +fT.tm+ +fT.th+ +fT.oc,[fT]);
@@ -384,9 +451,69 @@ function App(){
       </div>
 
       <div className="tabs-nav">
+        <button className={'tab-btn'+(tab==='therapy'?' active':'')} onClick={()=>setTab('therapy')}>{t.therapy}</button>
         <button className={'tab-btn'+(tab==='reversal'?' active':'')} onClick={()=>setTab('reversal')}>{t.reversal}</button>
         <button className={'tab-btn'+(tab==='hit4ts'?' active':'')} onClick={()=>setTab('hit4ts')}>{t.hit4ts}</button>
       </div>
+
+
+      {tab==='therapy'&&(
+        <div className="animate-in">
+          <div className="two-col">
+            <div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#eef2ff',color:'#4f46e5'}}>📦</div><h2>{t.lmwhGuide}</h2></div>
+                <div className="card-body">
+                  <div className="form-grid cols-2">
+                    <div className="form-group"><label>{t.agent}</label><select value={agent} onChange={e=>setAgent(e.target.value)}><option value="enoxaparin">{t.enoxaparin}</option><option value="tinzaparin">{t.tinzaparin}</option><option value="bemiparin">{t.bemiparin}</option><option value="fondaparinux">{t.fondaparinux}</option><option value="ufhTherapy">{t.ufhTherapy}</option></select></div>
+                    <div className="form-group"><label>{t.indication}</label><select value={indication} onChange={e=>setIndication(e.target.value)} disabled={agent==='ufhTherapy'}><option value="prophylaxis">{t.prophylaxis}</option><option value="treatment">{t.treatment}</option></select></div>
+                    <div className="form-group"><label>{t.context}</label><select value={context} onChange={e=>setContext(e.target.value)} disabled={agent!=='enoxaparin' || indication!=='prophylaxis'}><option value="general">{t.general}</option><option value="ortho">{t.ortho}</option></select></div>
+                    <div className="form-group"><label>{t.crcl}</label><input value={crcl?round(crcl).toString():'—'} disabled /></div>
+                  </div>
+                  {!crcl && <div className="alert alert-warning" style={{marginTop:16}}><span className="alert-icon">ℹ️</span><div>{t.crclNeeded}</div></div>}
+                  {therapyCalc && (
+                    <>
+                      <div className="form-grid cols-2" style={{marginTop:16}}>
+                        <div className="result-box accent"><div className="result-label">{t.selectedDose}</div><div className="result-value" style={{fontSize:'1.05rem'}}>{therapyCalc.selected}</div></div>
+                        <div className="result-box"><div className="result-row"><span className="label">{t.weightBased}</span><span className="value">{weight?weight+' kg':'—'}</span></div><div className="result-row"><span className="label">{t.dailyDose}</span><span className="value">{therapyCalc.daily}</span></div><div className="result-row"><span className="label">{t.renalNote}</span><span className="value" style={{whiteSpace:'normal',textAlign:'right',maxWidth:'60%'}}>{therapyCalc.renal}</span></div></div>
+                      </div>
+                      <div className="alert alert-info" style={{marginTop:16}}><span className="alert-icon">📘</span><div><strong>{t.lmwhReference}</strong><br/>{t.therapyWeightNote}</div></div>
+                      {therapyCalc.caution && <div className="alert alert-warning"><span className="alert-icon">⚠️</span><div>{therapyCalc.caution}</div></div>}
+                      <div className="info-box"><strong>{t.antiXaNote}:</strong> {therapyCalc.monitor}<br/><strong>{t.monitoringNote}:</strong> {t.orderLabs}</div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#f0f9ff',color:'#0ea5e9'}}>📝</div><h2>{t.lmwhOrderTitle}</h2></div>
+                <div className="card-body">
+                  {therapyCalc ? <div className="order-item" style={{whiteSpace:'pre-wrap'}}>{therapyCalc.order.join('\n')}{'\n'}{t.orderLabs}</div> : <div className="info-box">{t.crclNeeded}</div>}
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#fef2f2',color:'#dc2626'}}>🩸</div><h2>{t.initialUfhOrder}</h2></div>
+                <div className="card-body">
+                  <div className="info-box"><strong>{t.ufhStartNote}</strong></div>
+                  {weight && <div className="result-box accent" style={{marginTop:16}}><div className="result-label">{t.calcDose}</div><div className="result-value" style={{fontSize:'1.05rem'}}>{fmtNum((+weight||0)*80)} U IV bolus → {fmtNum((+weight||0)*18)} U/hr</div></div>}
+                </div>
+              </div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#fff7ed',color:'#ea580c'}}>📈</div><h2>{t.ufhNomogram}</h2></div>
+                <div className="card-body">
+                  <div className="form-grid cols-2">
+                    <div className="form-group"><label>{t.currentRate}</label><input type="number" value={ufhCurrentRate} onChange={e=>setUfhCurrentRate(e.target.value)} placeholder="1000" /></div>
+                    <div className="form-group"><label>{t.currentAptt}</label><input type="number" step="0.01" value={ufhCurrentAptt} onChange={e=>setUfhCurrentAptt(e.target.value)} placeholder="1.8" /></div>
+                  </div>
+                  <div className="step-box" style={{marginTop:16}}><div className="step-content">• {t.ratioBand1}<br/>• {t.ratioBand2}<br/>• {t.ratioBand3}<br/>• {t.ratioBand4}<br/>• {t.ratioBand5}<br/><br/><strong>{t.ufhCheck}</strong></div></div>
+                  {ufhAdj && <div className="result-box accent"><div className="result-row"><span className="label">{t.nextStep}</span><span className="value">{ufhAdj.action}</span></div><div className="result-row"><span className="label">{t.bolus}</span><span className="value">{ufhAdj.bolus}</span></div><div className="result-row"><span className="label">{t.currentRate}</span><span className="value">{ufhCurrentRate?ufhCurrentRate+' U/hr':'—'}</span></div><div className="result-row"><span className="label">New rate</span><span className="value">{ufhAdj.newRate!==null?ufhAdj.newRate+' U/hr':'—'}</span></div><div style={{marginTop:10,fontSize:'.82rem',color:'var(--text-secondary)'}}>{ufhAdj.text}</div></div>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {tab==='reversal'&&(
         <div className="animate-in">
