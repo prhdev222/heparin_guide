@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LMWH / Heparin & HIT Support App</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#f0f4f8;--surface:#fff;--surface-alt:#f7f9fc;
+    --border:#e2e8f0;--border-focus:#6366f1;
+    --text:#1e293b;--text-secondary:#64748b;--text-muted:#94a3b8;
+    --accent:#4f46e5;--accent-light:#eef2ff;
+    --danger:#dc2626;--danger-light:#fef2f2;--danger-border:#fecaca;
+    --warning:#f59e0b;--warning-light:#fffbeb;--warning-border:#fde68a;
+    --success:#059669;--success-light:#ecfdf5;--success-border:#a7f3d0;
+    --info:#0ea5e9;--info-light:#f0f9ff;--info-border:#bae6fd;
+    --orange:#ea580c;--orange-light:#fff7ed;--orange-border:#fed7aa;
+    --purple:#7c3aed;--purple-light:#f5f3ff;--purple-border:#ddd6fe;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+    --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+    --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+    --radius:12px;--radius-sm:8px;--radius-lg:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'IBM Plex Sans Thai',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .app-container{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
+  .app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .app-header h1{font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:10px}
+  .app-header h1 .icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+  .lang-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .lang-toggle button{padding:6px 16px;border:none;background:transparent;font-family:inherit;font-size:.875rem;font-weight:500;cursor:pointer;color:var(--text-secondary);transition:all .15s}
+  .lang-toggle button.active{background:var(--accent);color:#fff}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;transition:box-shadow .2s}
+  .card:hover{box-shadow:var(--shadow-md)}
+  .card-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+  .card-header .card-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .card-header h2{font-size:1rem;font-weight:600}
+  .card-body{padding:20px}
+  .form-grid{display:grid;gap:16px}
+  .form-grid.cols-2{grid-template-columns:1fr 1fr}
+  .form-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+  .form-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:768px){.form-grid.cols-2,.form-grid.cols-3,.form-grid.cols-4{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-grid.cols-2,.form-grid.cols-3,.form-grid.cols-4{grid-template-columns:1fr}}
+  .form-group{display:flex;flex-direction:column;gap:6px}
+  .form-group label{font-size:.8rem;font-weight:500;color:var(--text-secondary)}
+  .form-group input,.form-group select{font-family:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none;width:100%}
+  .form-group input:focus,.form-group select:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+  .form-group input::placeholder{color:var(--text-muted)}
+  .form-hint{font-size:.75rem;color:var(--text-muted)}
+  .result-box{border-radius:var(--radius);padding:16px;border:1.5px solid var(--border);background:var(--surface-alt)}
+  .result-box.accent{border-color:#c7d2fe;background:var(--accent-light)}
+  .result-label{font-size:.75rem;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .result-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--accent)}
+  .result-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--border);font-size:.875rem}
+  .result-row:last-child{border-bottom:none}
+  .result-row .label{color:var(--text-secondary)}
+  .result-row .value{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text)}
+  .alert{border-radius:var(--radius);padding:14px 16px;font-size:.875rem;display:flex;gap:10px;align-items:flex-start;line-height:1.5;margin-bottom:12px}
+  .alert .alert-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+  .alert-danger{background:var(--danger-light);border:1.5px solid var(--danger-border);color:#991b1b}
+  .alert-warning{background:var(--warning-light);border:1.5px solid var(--warning-border);color:#92400e}
+  .alert-info{background:var(--info-light);border:1.5px solid var(--info-border);color:#0c4a6e}
+  .alert-orange{background:var(--orange-light);border:1.5px solid var(--orange-border);color:#9a3412}
+  .alert-purple{background:var(--purple-light);border:1.5px solid var(--purple-border);color:#5b21b6}
+  .alert strong{font-weight:600}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{font-size:.75rem;padding:6px 12px;border-radius:20px;font-weight:500;line-height:1.3;border:1px solid var(--border);background:var(--surface-alt);color:var(--text-secondary)}
+  .badge.danger{background:var(--danger-light);border-color:var(--danger-border);color:#991b1b}
+  .tabs-nav{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:20px;box-shadow:var(--shadow-sm);overflow-x:auto}
+  .tab-btn{padding:10px 20px;border:none;background:transparent;font-family:inherit;font-size:.875rem;font-weight:500;cursor:pointer;border-radius:var(--radius-sm);color:var(--text-secondary);transition:all .15s;white-space:nowrap;flex:1;text-align:center}
+  .tab-btn:hover{background:var(--surface-alt)}
+  .tab-btn.active{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:768px){.two-col{grid-template-columns:1fr}}
+  .info-box{border-radius:var(--radius);padding:14px 16px;border:1.5px dashed var(--border);background:var(--surface-alt);font-size:.8rem;color:var(--text-secondary);line-height:1.6}
+  .info-box strong{color:var(--text)}
+  .clinical-notes{list-style:none}
+  .clinical-notes li{padding:8px 0 8px 20px;position:relative;font-size:.875rem;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+  .clinical-notes li:last-child{border-bottom:none}
+  .clinical-notes li::before{content:'';position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.5}
+  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:600px){.score-grid{grid-template-columns:1fr}}
+  .score-result{grid-column:1/-1;text-align:center;padding:24px;border-radius:var(--radius);border:2px solid var(--border);background:var(--surface-alt)}
+  .score-number{font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:700;line-height:1}
+  .score-label{font-size:.875rem;margin-top:8px;font-weight:500}
+  .prob-low{color:var(--success);border-color:var(--success-border);background:var(--success-light)}
+  .prob-intermediate{color:#d97706;border-color:var(--warning-border);background:var(--warning-light)}
+  .prob-high{color:var(--danger);border-color:var(--danger-border);background:var(--danger-light)}
+  .disclaimer{text-align:center;padding:24px 16px;font-size:.75rem;color:var(--text-muted);line-height:1.6}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .animate-in{animation:fadeIn .3s ease-out}
+  /* Order card */
+  .order-card{border:2px solid var(--success-border);background:linear-gradient(135deg,var(--success-light),#f0fdf4)}
+  .order-card .card-header{background:linear-gradient(135deg,#059669,#047857);border-bottom:none}
+  .order-card .card-header h2{color:#fff}
+  .order-card .card-header .card-icon{background:rgba(255,255,255,.2);color:#fff}
+  .order-section{margin-bottom:20px}
+  .order-section:last-child{margin-bottom:0}
+  .order-section-title{font-size:.8rem;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .order-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;font-size:.875rem;line-height:1.7}
+  .order-item:last-child{margin-bottom:0}
+  .order-item .dose-hl{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--danger);font-size:1rem}
+  .order-item .mono{font-family:'JetBrains Mono',monospace;font-weight:600}
+  .allergy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  @media(max-width:600px){.allergy-grid{grid-template-columns:1fr}}
+  .allergy-item{display:flex;align-items:flex-start;gap:8px;background:var(--surface);border:1px solid var(--danger-border);border-radius:var(--radius-sm);padding:10px 12px;font-size:.8rem;line-height:1.5}
+  .allergy-item .ai{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:var(--danger-light);display:flex;align-items:center;justify-content:center;font-size:12px}
+  .allergy-item strong{color:var(--danger);font-weight:600}
+  .monitor-list{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  @media(max-width:600px){.monitor-list{grid-template-columns:1fr 1fr}}
+  .monitor-item{background:var(--surface);border:1px solid var(--info-border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;font-size:.8rem}
+  .monitor-item .mi{font-size:18px;margin-bottom:4px}
+  .monitor-item .ml{color:var(--text-secondary);font-weight:500}
+  .se-box{background:var(--surface);border:1.5px solid var(--warning-border);border-radius:var(--radius);padding:14px 16px;font-size:.8rem;line-height:1.7;color:#92400e}
+  .se-box strong{color:#78350f}
+  .copy-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--success);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .15s;margin-top:16px}
+  .copy-btn:hover{background:#047857}
+  .copy-btn.copied{background:var(--accent)}
+  /* HIT pathway */
+  .pathway-card{border:2px solid var(--purple-border)}
+  .pathway-card .card-header{background:linear-gradient(135deg,#7c3aed,#6d28d9);border-bottom:none}
+  .pathway-card .card-header h2{color:#fff}
+  .pathway-card .card-header .card-icon{background:rgba(255,255,255,.2);color:#fff}
+  .step-box{border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1.5px solid var(--border);background:var(--surface)}
+  .step-box:last-child{margin-bottom:0}
+  .step-title{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .step-title.do{color:var(--success)}
+  .step-title.dont{color:var(--danger)}
+  .step-title.diag{color:var(--info)}
+  .step-title.lab{color:var(--purple)}
+  .step-title.drug{color:var(--orange)}
+  .step-content{font-size:.85rem;line-height:1.7;color:var(--text-secondary)}
+  .step-content strong{color:var(--text)}
+  .ddd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:700px){.ddd-grid{grid-template-columns:1fr}}
+  .ddd-box{border-radius:var(--radius);padding:14px;border:1.5px solid var(--border)}
+  .ddd-box.do-box{border-color:var(--success-border);background:var(--success-light)}
+  .ddd-box.dont-box{border-color:var(--danger-border);background:var(--danger-light)}
+  .ddd-box.diag-box{border-color:var(--info-border);background:var(--info-light)}
+  .ddd-box h3{font-size:.85rem;font-weight:700;margin-bottom:8px}
+  .ddd-box.do-box h3{color:#047857}
+  .ddd-box.dont-box h3{color:#991b1b}
+  .ddd-box.diag-box h3{color:#0369a1}
+  .ddd-list{list-style:none;font-size:.8rem;line-height:1.8}
+  .ddd-list li{padding-left:16px;position:relative;color:var(--text-secondary)}
+  .ddd-list li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%}
+  .do-box .ddd-list li::before{background:var(--success)}
+  .dont-box .ddd-list li::before{background:var(--danger)}
+  .diag-box .ddd-list li::before{background:var(--info)}
+  .drug-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:8px}
+  .drug-table th{background:var(--surface-alt);padding:8px 10px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--text-secondary);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+  .drug-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top}
+  .drug-table tr:last-child td{border-bottom:none}
+  .drug-table .drug-name{font-weight:600;color:var(--text)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useMemo,useCallback}=React;
+function round(v,d=1){if(!Number.isFinite(v))return 0;const f=10**d;return Math.round(v*f)/f}
+function cockcroftGault(a,w,s,sex){if(!a||!w||!s||a<=0||s<=0)return null;const b=((140-a)*w)/(72*s);return sex==='female'?b*.85:b}
+function parseClock(c){if(!/^\d{1,2}:\d{2}$/.test(c))return null;const[h,m]=c.split(':').map(Number);if(h<0||h>23||m<0||m>59)return null;return h+m/60}
+function elapsed(s,e){const a=parseClock(s),b=parseClock(e);if(a===null||b===null)return null;let d=b-a;if(d<0)d+=24;return round(d,2)}
+function ufhDecay(h){if(h<.5)return 1;if(h<1)return .75;if(h<2)return .5;if(h<3)return .25;return .1}
+function scDecay(h){if(h<1)return 1;if(h<2)return .75;if(h<4)return .5;if(h<8)return .25;return .1}
+
+const L={
+en:{
+  title:'LMWH / Heparin & HIT Support',
+  patient:'Patient Data',age:'Age (years)',weight:'Weight (kg)',scr:'Serum Creatinine (mg/dL)',sex:'Sex',male:'Male',female:'Female',crcl:'CrCl',
+  reversal:'Reversal',ufh:'UFH Reversal',route:'Route',iv:'IV infusion',sc:'Subcutaneous',
+  lastDoseTime:'Hours since last dose',stopClock:'Time stopped (HH:MM)',currentClock:'Current time (HH:MM)',
+  heparinRate:'Rate (units/hr)',heparinBolus:'Bolus (units)',scDose:'SC dose (units)',
+  aptt:'aPTT ratio',apttHelp:'1.0=normal, 2.5=prolonged',
+  scenario:'Scenario',major:'Major bleeding',urgent:'Urgent procedure',overdose:'Overdose, no major bleeding',hit:'Suspected HIT',
+  hitTitle:'HIT Warning',hitBody:'Stop ALL heparin. Use HIT pathway with specialist review.',
+  totalExposure:'Heparin exposure',protamine:'Protamine (initial)',additionalDose:'Additional dose',apttSuggestion:'aPTT suggestion',
+  maxDoseWarning:'Max protamine: 50 mg',reactionWarning:'Caution: prior protamine, vasectomy, fish allergy, protamine-insulin.',
+  enox:'Enoxaparin Reversal',lastDose:'Last enoxaparin (mg)',result:'Protamine dose',hours:'Hours since dose',
+  consult:'Clinical Notes',stopHeparin:'Stop heparin immediately.',
+  checkLabs:'Check CBC, aPTT, PT/INR, creatinine, fibrinogen.',sourceControl:'Address bleeding source urgently.',
+  procedureNote:'Reversal intensity per bleeding risk and timing.',overdoseNote:'No major bleeding — full neutralization may be unnecessary.',
+  apttNormal:'aPTT near normal — less protamine may suffice.',apttHigh:'aPTT elevated — consider repeat protamine.',
+  scNote:'SC heparin: prolonged absorption, reassess.',
+  autoHours:'Auto elapsed',decayModel:'Decay model',
+  decayIV:'IV: <30min 100%, 30-60min 75%, 1-2hr 50%, 2-3hr 25%, >3hr 10%',
+  decaySC:'SC: <1hr 100%, 1-2hr 75%, 2-4hr 50%, 4-8hr 25%, >8hr 10%',
+  procedureRisk:'Procedure risk',low:'Low',moderate:'Moderate',high:'High',veryHigh:'Very high',
+  lowAdv:'Low-risk: partial reversal may suffice.',modAdv:'Moderate: more complete offset.',highAdv:'High: stronger reversal + senior review.',vhAdv:'Very high: urgent senior input.',
+  infusionRateWarning:'Infuse protamine slowly — rapid infusion may cause hypotension, bradycardia, pulmonary reactions.',
+  hit4ts:'4Ts Score & HIT Management',
+  thrombocytopenia:'Thrombocytopenia',tcOpts:['Fall <30% or nadir <10','Fall 30-50% or nadir 10-19','Fall >50% and nadir ≥20'],
+  timing:'Timing of platelet fall',tmOpts:['Fall ≤4d without recent heparin','Consistent but unclear, or 5-10d after prior heparin','Clear onset day 5-10, or ≤1d with recent heparin (within 30d)'],
+  thrombosis:'Thrombosis / Sequelae',thOpts:['None','Progressive/recurrent, or erythematous skin lesion','New confirmed thrombosis, skin necrosis, or anaphylactoid reaction'],
+  otherCauses:'Other causes for thrombocytopenia',ocOpts:['Definite other cause present','Possible other cause','No other apparent cause'],
+  score:'Total Score',probability:'Probability',lowProb:'Low probability (0-3)',intProb:'Intermediate probability (4-5)',highProb:'High probability (6-8)',
+  activePercent:'active residual',
+  disclaimer:'Clinical decision support only. Verify with current guidelines and clinical judgment. Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',
+  // Order
+  ordTitle:'Protamine Order',ordDrug:'Drug & Preparation',ordRate:'Rate',ordAllergy:'Allergy Screening',ordMonitor:'Monitoring',ordSE:'Side Effects',
+  ordCopy:'Copy Order',ordCopied:'Copied!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'Dilute in',ordNSS:'NSS or D5W 50-100 mL',
+  ordIVslow:'IV drip over',ordMinUnit:'min',ordMaxRate:'Max: 5 mg/min (≤20 mg per 2 min)',ordMaxDose:'Max single dose: 50 mg',
+  ordRepeat:'May repeat after 10-15 min (0.5 mg per 100 units UFH)',
+  ordFish:'Fish allergy',ordFishD:'Protamine from fish sperm — allergic risk',
+  ordVas:'Prior vasectomy',ordVasD:'Anti-sperm Ab cross-reaction',
+  ordPrior:'Prior protamine',ordPriorD:'IgE/IgG hypersensitivity risk',
+  ordNPH:'NPH insulin',ordNPHD:'Contains protamine — sensitization',
+  ordBP:'BP',ordHR:'HR',ordSpO2:'SpO2',ordAPTT:'aPTT',ordResus:'Resuscitation',ordSymptom:'Symptoms',
+  ordFreq:'q5min during, then q15min×1hr',ordAPTTpost:'15 min post-dose',
+  ordSEtext:'Hypotension, bradycardia, flushing, dyspnea, pulmonary edema. Severe: anaphylaxis, CV collapse.',
+  ordEmerg:'Have resuscitation equipment + epinephrine 1:1,000 at bedside.',
+  ordRebound:'Heparin rebound: effect may recur 2-8 hr post-protamine — reassess aPTT.',
+  ordEnoxNote:'Enoxaparin: protamine neutralizes ~60% anti-Xa. Second dose 0.5 mg/1 mg enoxaparin if needed.',
+  ordVialNote:'vial(s) — 5 mL = 50 mg each',
+  // HIT Management
+  hitPathTitle:'HIT Diagnostic & Management Pathway',
+  hitDx:'Diagnostic Approach',
+  hitLowAction:'4Ts 0-3: Low probability → HIT unlikely. Consider continuing heparin. BUT: In critically ill / complicated patients with coexisting causes of thrombocytopenia, low 4Ts may be UNSAFE to exclude HIT — consider sending immunoassay.',
+  hitIntAction:'4Ts 4-5: Intermediate → STOP heparin, start alternative anticoagulant, SEND PF4-dependent immunoassay (screening test).',
+  hitHighAction:'4Ts 6-8: High → STOP heparin, start alternative anticoagulant, TREAT as HIT while awaiting confirmatory test. Send both immunoassay AND functional assay.',
+  hitLabTitle:'Laboratory Investigations for HIT',
+  hitScreening:'Screening: PF4-dependent immunoassay',
+  hitScreenList:'EIA (PF4/heparin) — sensitivity ≥99% for HIT\nRapid immunoassay: PaGIA (>95%), LFIA (~90%), CLIA (~95%)\nHigher OD in EIA (>1.0) correlates with higher probability of true HIT',
+  hitConfirm:'Confirmatory: Platelet activation assay',
+  hitConfirmList:'SRA (Serotonin Release Assay) — Gold standard\nHIPA (Heparin-Induced Platelet Aggregation) — comparable to SRA\nPlatelet aggregometry — available in Thailand, moderate sensitivity (60-70%)',
+  hitConfirmNote:'In Thailand, platelet aggregometry is the main available confirmatory test. Despite strongly positive immunoassay (OD >1), confirmatory test is needed to avoid overdiagnosis.',
+  hitMgmtTitle:'3 Do\'s, 3 Don\'ts, 3 Diagnostics',
+  do1:'Stop/avoid ALL heparin (including flushes)',do2:'Start alternative non-heparin anticoagulant at therapeutic dose',do3:'Document potential HIT in medical record',
+  dont1:'Do NOT give warfarin (risk of venous limb gangrene)',dont2:'Do NOT give prophylactic platelet transfusion',dont3:'Do NOT insert IVC filter',
+  diag1:'Test for HIT antibodies (immunoassay ± functional assay)',diag2:'Image for lower limb DVT (optional)',diag3:'Test for DIC (especially in ICU)',
+  hitAltTitle:'Alternative Anticoagulants for HIT',
+  fondaTitle:'Fondaparinux (first-line)',
+  fondaDose:'7.5 mg SC once daily (BW 50-100 kg)\n5 mg if BW <50 kg\n10 mg if BW >100 kg',
+  doacTitle:'DOACs for HIT',
+  warfarinNote:'Warfarin: start only when platelets recover to >150,000/μL or baseline. Overlap with non-heparin anticoagulant ≥5 days AND INR 2-3 for ≥48 hours.',
+  durationNoThromb:'Without thrombosis: 4 weeks',
+  durationThromb:'With thrombosis: 3-6 months',
+  icuWarning:'Low 4Ts (0-3) may be UNSAFE for excluding HIT in critically ill and complicated patients. KCMH experience: 3/13 confirmed HIT patients had low 4Ts scores.',
+  plateletRecovery:'~90% of confirmed HIT patients had platelet recovery shortly after switching to non-heparin anticoagulants. Immediate platelet response may support diagnosis.',
+},
+th:{
+  title:'โปรแกรมช่วยใช้ LMWH / Heparin & HIT',
+  patient:'ข้อมูลผู้ป่วย',age:'อายุ (ปี)',weight:'น้ำหนัก (กก.)',scr:'Serum Creatinine (mg/dL)',sex:'เพศ',male:'ชาย',female:'หญิง',crcl:'CrCl',
+  reversal:'การแก้ฤทธิ์',ufh:'แก้ฤทธิ์ UFH',route:'รูปแบบ',iv:'IV infusion',sc:'ฉีดใต้ผิวหนัง',
+  lastDoseTime:'ชั่วโมงตั้งแต่ได้รับ/หยุดยา',stopClock:'เวลาหยุดยา (HH:MM)',currentClock:'เวลาปัจจุบัน (HH:MM)',
+  heparinRate:'Rate (units/ชม.)',heparinBolus:'Bolus (units)',scDose:'SC dose (units)',
+  aptt:'aPTT ratio',apttHelp:'1.0=ปกติ, 2.5=ยาว',
+  scenario:'สถานการณ์',major:'เลือดออกรุนแรง',urgent:'หัตถการเร่งด่วน',overdose:'ยาเกิน ไม่มี major bleeding',hit:'สงสัย HIT',
+  hitTitle:'คำเตือน HIT',hitBody:'หยุด heparin ทุกชนิดทันที เข้าแนวทาง HIT ปรึกษาผู้เชี่ยวชาญ',
+  totalExposure:'Heparin ที่ได้รับ',protamine:'Protamine (เริ่มต้น)',additionalDose:'ขนาดเพิ่มเติม',apttSuggestion:'แนะนำตาม aPTT',
+  maxDoseWarning:'Protamine สูงสุด: 50 mg',reactionWarning:'ระวัง: เคยได้ protamine, vasectomy, แพ้ปลา, protamine-insulin',
+  enox:'แก้ฤทธิ์ Enoxaparin',lastDose:'Enoxaparin ล่าสุด (mg)',result:'ขนาด protamine',hours:'ชม. หลังให้ยา',
+  consult:'ข้อควรพิจารณา',stopHeparin:'หยุด heparin ทันที',
+  checkLabs:'ส่งตรวจ CBC, aPTT, PT/INR, Cr, fibrinogen',sourceControl:'หาสาเหตุเลือดออก รักษาประคับประคอง',
+  procedureNote:'แก้ฤทธิ์ตามความเสี่ยงเลือดออกและเวลาหัตถการ',overdoseNote:'ไม่มี major bleeding อาจไม่ต้องแก้ฤทธิ์เต็มที่',
+  apttNormal:'aPTT ใกล้ปกติ — อาจไม่ต้องให้ protamine ซ้ำมาก',apttHigh:'aPTT สูง — พิจารณา protamine ซ้ำ',
+  scNote:'SC heparin ดูดซึมยืดเยื้อ ติดตามซ้ำ',
+  autoHours:'เวลาอัตโนมัติ',decayModel:'โมเดลสลายตัว',
+  decayIV:'IV: <30นาที 100%, 30-60นาที 75%, 1-2ชม. 50%, 2-3ชม. 25%, >3ชม. 10%',
+  decaySC:'SC: <1ชม. 100%, 1-2ชม. 75%, 2-4ชม. 50%, 4-8ชม. 25%, >8ชม. 10%',
+  procedureRisk:'ความเสี่ยงเลือดออก',low:'ต่ำ',moderate:'ปานกลาง',high:'สูง',veryHigh:'สูงมาก',
+  lowAdv:'ต่ำ: แก้ฤทธิ์บางส่วนอาจพอ',modAdv:'ปานกลาง: ให้หมดฤทธิ์มากขึ้น',highAdv:'สูง: แก้ฤทธิ์มากขึ้น ปรึกษาผู้เชี่ยวชาญ',vhAdv:'สูงมาก: ปรึกษาเร่งด่วน',
+  infusionRateWarning:'ให้ protamine ช้าๆ — อาจทำให้ hypotension, bradycardia, pulmonary reaction',
+  hit4ts:'4Ts Score & การจัดการ HIT',
+  thrombocytopenia:'เกล็ดเลือดลดลง',tcOpts:['ลดลง <30% หรือ nadir <10','ลดลง 30-50% หรือ nadir 10-19','ลดลง >50% และ nadir ≥20'],
+  timing:'ช่วงเวลาที่เกล็ดเลือดลด',tmOpts:['ลดลง ≤4 วัน ไม่มีประวัติ heparin','สอดคล้องแต่ไม่ชัด หรือ 5-10 วันหลัง heparin ก่อนหน้า','ชัดเจนวันที่ 5-10 หรือ ≤1 วันหากเพิ่งได้ heparin (ภายใน 30 วัน)'],
+  thrombosis:'Thrombosis / ภาวะแทรกซ้อน',thOpts:['ไม่มี','ลุกลาม/เป็นซ้ำ หรือผื่นแดงบริเวณฉีด','เกิดใหม่ยืนยันแล้ว, skin necrosis, หรือ anaphylactoid reaction'],
+  otherCauses:'สาเหตุอื่นของ thrombocytopenia',ocOpts:['มีสาเหตุอื่นชัดเจน','อาจมีสาเหตุอื่น','ไม่พบสาเหตุอื่น'],
+  score:'คะแนนรวม',probability:'ความน่าจะเป็น',lowProb:'โอกาสต่ำ (0-3)',intProb:'โอกาสปานกลาง (4-5)',highProb:'โอกาสสูง (6-8)',
+  activePercent:'ฤทธิ์คงเหลือ',
+  disclaimer:'ใช้เพื่อช่วยตัดสินใจทางคลินิกเท่านั้น ตรวจสอบกับแนวทางปัจจุบันเสมอ Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',
+  ordTitle:'คำสั่งให้ Protamine',ordDrug:'ตัวยาและการเตรียม',ordRate:'อัตราการให้',ordAllergy:'คัดกรองแพ้ยา',ordMonitor:'เฝ้าระวัง',ordSE:'อาการข้างเคียง',
+  ordCopy:'คัดลอกคำสั่ง',ordCopied:'คัดลอกแล้ว!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'ผสมใน',ordNSS:'NSS หรือ D5W 50-100 mL',
+  ordIVslow:'IV drip ใน',ordMinUnit:'นาที',ordMaxRate:'สูงสุด: 5 mg/นาที (≤20 mg ทุก 2 นาที)',ordMaxDose:'สูงสุดต่อครั้ง: 50 mg',
+  ordRepeat:'ให้ซ้ำได้หลัง 10-15 นาที (0.5 mg ต่อ UFH 100 units)',
+  ordFish:'แพ้ปลา',ordFishD:'Protamine จากอสุจิปลา',
+  ordVas:'เคย vasectomy',ordVasD:'Anti-sperm Ab cross-react',
+  ordPrior:'เคยได้ protamine',ordPriorD:'เสี่ยง hypersensitivity',
+  ordNPH:'NPH insulin',ordNPHD:'มี protamine — sensitization',
+  ordBP:'BP',ordHR:'HR',ordSpO2:'SpO2',ordAPTT:'aPTT',ordResus:'ช่วยชีวิต',ordSymptom:'อาการ',
+  ordFreq:'ทุก 5 นาที ขณะให้ยา แล้วทุก 15 นาที×1ชม.',ordAPTTpost:'หลังให้ 15 นาที',
+  ordSEtext:'Hypotension, bradycardia, flushing, หายใจลำบาก, pulmonary edema รุนแรง: anaphylaxis, CV collapse',
+  ordEmerg:'เตรียมอุปกรณ์ช่วยชีวิต + epinephrine 1:1,000 ข้างเตียง',
+  ordRebound:'Heparin rebound: ฤทธิ์อาจกลับใน 2-8 ชม. — ติดตาม aPTT',
+  ordEnoxNote:'Enoxaparin: protamine แก้ anti-Xa ~60% อาจให้ dose ที่สอง 0.5 mg/enoxaparin 1 mg',
+  ordVialNote:'vial — 5 mL = 50 mg',
+  // HIT Management
+  hitPathTitle:'แนวทางวินิจฉัยและจัดการ HIT',
+  hitDx:'การวินิจฉัย',
+  hitLowAction:'4Ts 0-3: โอกาสต่ำ → HIT ไม่น่าจะเป็น อาจใช้ heparin ต่อได้ แต่: ในผู้ป่วยวิกฤต / ซับซ้อน ที่มีสาเหตุ thrombocytopenia หลายอย่าง คะแนนต่ำอาจ ไม่ปลอดภัย ที่จะ exclude HIT — ควรพิจารณาส่ง immunoassay',
+  hitIntAction:'4Ts 4-5: ปานกลาง → หยุด heparin, เริ่มยา anticoagulant ทดแทน, ส่ง PF4-dependent immunoassay (screening test)',
+  hitHighAction:'4Ts 6-8: สูง → หยุด heparin, เริ่มยา anticoagulant ทดแทน, รักษาเสมือน HIT ทันที รอผล confirmatory test ส่งทั้ง immunoassay และ functional assay',
+  hitLabTitle:'การส่งตรวจทางห้องปฏิบัติการ',
+  hitScreening:'Screening: PF4-dependent immunoassay',
+  hitScreenList:'EIA (PF4/heparin) — sensitivity ≥99% สำหรับ HIT\nRapid immunoassay: PaGIA (>95%), LFIA (~90%), CLIA (~95%)\nค่า OD สูงใน EIA (>1.0) สัมพันธ์กับโอกาส HIT จริงมากขึ้น',
+  hitConfirm:'Confirmatory: Platelet activation assay',
+  hitConfirmList:'SRA (Serotonin Release Assay) — Gold standard\nHIPA — เทียบเท่า SRA\nPlatelet aggregometry — มีในไทย, sensitivity ปานกลาง (60-70%)',
+  hitConfirmNote:'ในประเทศไทย platelet aggregometry เป็น confirmatory test หลัก แม้ immunoassay จะ positive มาก (OD >1) ก็ต้องยืนยันด้วย functional assay เพื่อหลีกเลี่ยง overdiagnosis',
+  hitMgmtTitle:'3 Do / 3 Don\'t / 3 Diagnostics',
+  do1:'หยุด heparin ทุกชนิด (รวม flushes)',do2:'เริ่มยา anticoagulant ทดแทนในขนาดรักษา',do3:'บันทึกการวินิจฉัย HIT ในเวชระเบียน',
+  dont1:'ห้ามให้ warfarin (เสี่ยง venous limb gangrene)',dont2:'ห้ามให้ prophylactic platelet transfusion',dont3:'ห้ามใส่ IVC filter',
+  diag1:'ส่งตรวจ HIT antibody (immunoassay ± functional assay)',diag2:'ทำ ultrasound ขาดู DVT (optional)',diag3:'ตรวจ DIC (โดยเฉพาะใน ICU)',
+  hitAltTitle:'ยา Anticoagulant ทดแทนสำหรับ HIT',
+  fondaTitle:'Fondaparinux (first-line)',
+  fondaDose:'7.5 mg SC วันละครั้ง (BW 50-100 kg)\n5 mg ถ้า BW <50 kg\n10 mg ถ้า BW >100 kg',
+  doacTitle:'DOACs สำหรับ HIT',
+  warfarinNote:'Warfarin: เริ่มเมื่อเกล็ดเลือดกลับ >150,000/μL หรือ baseline overlap กับ non-heparin anticoagulant ≥5 วัน AND INR 2-3 ≥48 ชม.',
+  durationNoThromb:'ไม่มี thrombosis: ให้ 4 สัปดาห์',
+  durationThromb:'มี thrombosis: ให้ 3-6 เดือน',
+  icuWarning:'คะแนน 4Ts ต่ำ (0-3) อาจไม่ปลอดภัยในผู้ป่วยวิกฤต/ซับซ้อน ประสบการณ์จาก KCMH: 3/13 ราย HIT ที่ยืนยันแล้วมีคะแนน 4Ts ต่ำ',
+  plateletRecovery:'~90% ของ HIT ที่ยืนยันแล้ว เกล็ดเลือดฟื้นตัวเร็วหลังเปลี่ยนเป็น non-heparin anticoagulant การตอบสนองทันทีช่วยสนับสนุนการวินิจฉัย',
+}
+};
+
+function App(){
+  const[lang,setLang]=useState('th');
+  const[tab,setTab]=useState('reversal');
+  const[age,setAge]=useState('');const[weight,setWeight]=useState('');const[scr,setScr]=useState('');const[sex,setSex]=useState('male');
+  const[route,setRoute]=useState('iv');const[scenario,setScenario]=useState('major');const[hitSusp,setHitSusp]=useState('no');const[procRisk,setProcRisk]=useState('moderate');
+  const[hepRate,setHepRate]=useState('');const[hepBolus,setHepBolus]=useState('');const[scDose,setScDose]=useState('');
+  const[hrsSince,setHrsSince]=useState('');const[stopClk,setStopClk]=useState('');const[curClk,setCurClk]=useState('');const[apttR,setApttR]=useState('');
+  const[enoxD,setEnoxD]=useState('');const[enoxH,setEnoxH]=useState('');
+  const[fT,setFT]=useState({tc:'0',tm:'0',th:'0',oc:'0'});
+  const[copied,setCopied]=useState(false);
+  const t=L[lang];
+  const crcl=useMemo(()=>cockcroftGault(+age,+weight,+scr,sex),[age,weight,scr,sex]);
+  const autoH=useMemo(()=>elapsed(stopClk,curClk),[stopClk,curClk]);
+  const effH=useMemo(()=>{const m=+hrsSince;if(Number.isFinite(m)&&m>0)return m;return autoH},[hrsSince,autoH]);
+  const ufh=useMemo(()=>{
+    const hrs=effH??0,r=+hepRate,b=+hepBolus,s=+scDose;if(hitSusp==='yes')return null;
+    let exp=0,frac=0;
+    if(route==='iv'){frac=ufhDecay(hrs);exp=(r>0?r*Math.min(hrs,3)*frac:0)+(b>0?b*frac:0)}
+    else{frac=scDecay(hrs);exp=s>0?s*frac:0}
+    if(exp<=0)return null;
+    return{exp:round(exp),ini:round(Math.min(50,exp/100)),add:round(Math.min(50,exp/200)),frac:round(frac*100,0)}
+  },[route,hepRate,hepBolus,scDose,effH,hitSusp]);
+  const apttSug=useMemo(()=>{const r=+apttR;if(!r)return null;return r<=1.2?t.apttNormal:t.apttHigh},[apttR,t]);
+  const procAdv=useMemo(()=>({low:t.lowAdv,moderate:t.modAdv,high:t.highAdv,veryHigh:t.vhAdv}[procRisk]),[procRisk,t]);
+  const scenAdv=useMemo(()=>{if(scenario==='major')return t.stopHeparin+' '+t.sourceControl;if(scenario==='urgent')return t.procedureNote+' '+procAdv;return t.overdoseNote},[scenario,t,procAdv]);
+  const enoxProt=useMemo(()=>{const d=+enoxD,h=+enoxH;if(!d||h<0)return null;if(h<8)return round(d)+' mg';if(h<=12)return round(d*.5)+' mg';return lang==='en'?'Protamine may be of limited benefit':'Protamine อาจให้ประโยชน์จำกัด'},[enoxD,enoxH,lang]);
+  const hitSc=useMemo(()=>+fT.tc+ +fT.tm+ +fT.th+ +fT.oc,[fT]);
+  const hitProb=useMemo(()=>{if(hitSc<=3)return{text:t.lowProb,cls:'prob-low',level:'low'};if(hitSc<=5)return{text:t.intProb,cls:'prob-intermediate',level:'int'};return{text:t.highProb,cls:'prob-high',level:'high'}},[hitSc,t]);
+  const protDose=useMemo(()=>{if(ufh)return ufh.ini;if(enoxProt&&!enoxProt.includes('limited')&&!enoxProt.includes('จำกัด'))return parseFloat(enoxProt);return null},[ufh,enoxProt]);
+  const infTime=useMemo(()=>protDose?Math.max(10,Math.ceil(protDose/5)):10,[protDose]);
+  const vials=useMemo(()=>{if(!protDose)return null;const ml=protDose/10;return{ml:round(ml,1),n:Math.ceil(ml/5)}},[protDose]);
+  const orderTxt=useMemo(()=>{if(!protDose)return '';const isE=!ufh&&enoxProt;return['=== PROTAMINE ORDER ===','Protamine sulfate '+protDose+' mg IV',vials?'('+vials.ml+' mL of 10 mg/mL)':'','Dilute in NSS/D5W 50-100 mL','IV drip over '+infTime+' min (max 5 mg/min)','Max single dose: 50 mg','','Indication: '+(isE?'Enoxaparin':'UFH')+' reversal',ufh?'Est. exposure: '+ufh.exp+' units ('+ufh.frac+'% active)':'',ufh?'Additional: '+ufh.add+' mg after 10-15 min':'','','ALLERGY: Fish allergy? Vasectomy? Prior protamine? NPH insulin?','','MONITOR: BP/HR/SpO2 q5min, aPTT 15min post-dose','Resuscitation equipment + epinephrine at bedside','','Heparin rebound may occur 2-8 hr post-protamine'].filter(Boolean).join('\n')},[protDose,ufh,enoxProt,vials,infTime]);
+  const doCopy=useCallback(()=>{if(!orderTxt)return;navigator.clipboard.writeText(orderTxt).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)}).catch(()=>{})},[orderTxt]);
+
+  // HIT action text based on score
+  const hitActionText = useMemo(()=>{
+    if(hitProb.level==='low') return t.hitLowAction;
+    if(hitProb.level==='int') return t.hitIntAction;
+    return t.hitHighAction;
+  },[hitProb,t]);
+
+  return(
+    <div className="app-container">
+      <div className="app-header">
+        <h1><span className="icon">💉</span>{t.title}</h1>
+        <div className="lang-toggle">
+          <button className={lang==='th'?'active':''} onClick={()=>setLang('th')}>ไทย</button>
+          <button className={lang==='en'?'active':''} onClick={()=>setLang('en')}>EN</button>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header"><div className="card-icon" style={{background:'#eef2ff',color:'#4f46e5'}}>👤</div><h2>{t.patient}</h2></div>
+        <div className="card-body">
+          <div className="form-grid cols-4">
+            <div className="form-group"><label>{t.age}</label><input type="number" value={age} onChange={e=>setAge(e.target.value)} placeholder="65"/></div>
+            <div className="form-group"><label>{t.weight}</label><input type="number" value={weight} onChange={e=>setWeight(e.target.value)} placeholder="60"/></div>
+            <div className="form-group"><label>{t.scr}</label><input type="number" step="0.1" value={scr} onChange={e=>setScr(e.target.value)} placeholder="1.2"/></div>
+            <div className="form-group"><label>{t.sex}</label><select value={sex} onChange={e=>setSex(e.target.value)}><option value="male">{t.male}</option><option value="female">{t.female}</option></select></div>
+          </div>
+          <div style={{marginTop:16}}><div className="result-box accent"><div className="result-label">{t.crcl}</div><div className="result-value">{crcl?round(crcl)+' mL/min':'—'}</div></div></div>
+        </div>
+      </div>
+
+      <div className="tabs-nav">
+        <button className={'tab-btn'+(tab==='reversal'?' active':'')} onClick={()=>setTab('reversal')}>{t.reversal}</button>
+        <button className={'tab-btn'+(tab==='hit4ts'?' active':'')} onClick={()=>setTab('hit4ts')}>{t.hit4ts}</button>
+      </div>
+
+      {tab==='reversal'&&(
+        <div className="animate-in">
+          <div className="two-col">
+            <div className="card">
+              <div className="card-header"><div className="card-icon" style={{background:'#fef2f2',color:'#dc2626'}}>🩸</div><h2>{t.ufh}</h2></div>
+              <div className="card-body">
+                <div className="form-grid cols-2">
+                  <div className="form-group"><label>{t.route}</label><select value={route} onChange={e=>setRoute(e.target.value)}><option value="iv">{t.iv}</option><option value="sc">{t.sc}</option></select></div>
+                  <div className="form-group"><label>{t.scenario}</label><select value={scenario} onChange={e=>setScenario(e.target.value)}><option value="major">{t.major}</option><option value="urgent">{t.urgent}</option><option value="overdose">{t.overdose}</option></select></div>
+                  <div className="form-group"><label>{t.procedureRisk}</label><select value={procRisk} onChange={e=>setProcRisk(e.target.value)}><option value="low">{t.low}</option><option value="moderate">{t.moderate}</option><option value="high">{t.high}</option><option value="veryHigh">{t.veryHigh}</option></select></div>
+                  <div className="form-group"><label>{t.hit}</label><select value={hitSusp} onChange={e=>setHitSusp(e.target.value)}><option value="no">No</option><option value="yes">Yes</option></select></div>
+                </div>
+                {hitSusp==='yes'&&(<div className="alert alert-danger" style={{marginTop:16}}><span className="alert-icon">🚨</span><div><strong>{t.hitTitle}</strong><br/>{t.hitBody}</div></div>)}
+                {route==='iv'?(
+                  <div className="form-grid cols-2" style={{marginTop:16}}>
+                    <div className="form-group"><label>{t.heparinRate}</label><input type="number" value={hepRate} onChange={e=>setHepRate(e.target.value)} placeholder="1000"/></div>
+                    <div className="form-group"><label>{t.heparinBolus}</label><input type="number" value={hepBolus} onChange={e=>setHepBolus(e.target.value)} placeholder="5000"/></div>
+                  </div>
+                ):(
+                  <div className="form-grid" style={{marginTop:16}}><div className="form-group"><label>{t.scDose}</label><input type="number" value={scDose} onChange={e=>setScDose(e.target.value)} placeholder="5000"/></div></div>
+                )}
+                <div className="form-grid cols-3" style={{marginTop:16}}>
+                  <div className="form-group"><label>{t.stopClock}</label><input value={stopClk} onChange={e=>setStopClk(e.target.value)} placeholder="14:30"/></div>
+                  <div className="form-group"><label>{t.currentClock}</label><input value={curClk} onChange={e=>setCurClk(e.target.value)} placeholder="16:00"/></div>
+                  <div className="form-group"><label>{t.lastDoseTime}</label><input type="number" step="0.5" value={hrsSince} onChange={e=>setHrsSince(e.target.value)} placeholder="override"/></div>
+                </div>
+                <div className="info-box" style={{marginTop:16}}><strong>{t.autoHours}:</strong> {autoH!==null?autoH+' hr':'—'}<br/><strong>{t.decayModel}:</strong> {route==='iv'?t.decayIV:t.decaySC}</div>
+                <div className="form-grid cols-2" style={{marginTop:16}}>
+                  <div className="form-group"><label>{t.aptt}</label><input type="number" step="0.1" value={apttR} onChange={e=>setApttR(e.target.value)} placeholder="2.5"/><span className="form-hint">{t.apttHelp}</span></div>
+                  <div className="result-box">
+                    <div className="result-row"><span className="label">{t.totalExposure}</span><span className="value">{ufh?ufh.exp+' units':'—'}</span></div>
+                    <div className="result-row"><span className="label">{t.protamine}</span><span className="value" style={{color:'var(--danger)'}}>{ufh?ufh.ini+' mg':'—'}</span></div>
+                    <div className="result-row"><span className="label">{t.additionalDose}</span><span className="value">{ufh?ufh.add+' mg':'—'}</span></div>
+                    <div className="result-row"><span className="label">{t.activePercent}</span><span className="value">{ufh?ufh.frac+'%':'—'}</span></div>
+                  </div>
+                </div>
+                {apttSug&&(<div className="alert alert-info" style={{marginTop:16}}><span className="alert-icon">💡</span><div><strong>{t.apttSuggestion}</strong><br/>{apttSug}</div></div>)}
+                <div className="badge-row" style={{marginTop:16}}>
+                  <span className="badge danger">{t.maxDoseWarning}</span>
+                  <span className="badge">{t.reactionWarning}</span>
+                  {route==='sc'&&<span className="badge">{t.scNote}</span>}
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#f0f9ff',color:'#0ea5e9'}}>💊</div><h2>{t.enox}</h2></div>
+                <div className="card-body">
+                  <div className="form-grid cols-2">
+                    <div className="form-group"><label>{t.lastDose}</label><input type="number" value={enoxD} onChange={e=>setEnoxD(e.target.value)} placeholder="60"/></div>
+                    <div className="form-group"><label>{t.hours}</label><input type="number" step="0.5" value={enoxH} onChange={e=>setEnoxH(e.target.value)} placeholder="4"/></div>
+                  </div>
+                  <div className="result-box accent" style={{marginTop:16}}><div className="result-label">{t.result}</div><div className="result-value" style={{fontSize:'1.25rem'}}>{enoxProt||'—'}</div></div>
+                </div>
+              </div>
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#fffbeb',color:'#f59e0b'}}>📋</div><h2>{t.consult}</h2></div>
+                <div className="card-body"><ul className="clinical-notes"><li>{scenAdv}</li><li>{procAdv}</li><li>{t.checkLabs}</li><li>{t.infusionRateWarning}</li></ul></div>
+              </div>
+            </div>
+          </div>
+          {/* Protamine Order */}
+          {protDose&&protDose>0&&(
+            <div className="card order-card animate-in">
+              <div className="card-header"><div className="card-icon">💧</div><h2>{t.ordTitle}</h2></div>
+              <div className="card-body">
+                <div className="order-section"><div className="order-section-title">💊 {t.ordDrug}</div>
+                  <div className="order-item"><strong>{t.ordName}</strong>{' '}<span className="dose-hl">{protDose} mg</span>{vials&&<span> = <span className="mono">{vials.ml} mL</span> ({t.ordConc})</span>}<br/>{t.ordDilute} <strong>{t.ordNSS}</strong>{vials&&vials.n>0&&<><br/><span style={{color:'var(--text-muted)',fontSize:'.8rem'}}>({vials.n} {t.ordVialNote})</span></>}</div>
+                </div>
+                <div className="order-section"><div className="order-section-title">⏱️ {t.ordRate}</div>
+                  <div className="order-item">{t.ordIVslow}{' '}<span className="dose-hl">{infTime} {t.ordMinUnit}</span><br/><strong>{t.ordMaxRate}</strong><br/><span style={{fontSize:'.8rem',color:'var(--text-secondary)'}}>{t.ordMaxDose}<br/>{t.ordRepeat}</span></div>
+                </div>
+                <div className="order-section"><div className="order-section-title">⚠️ {t.ordAllergy}</div>
+                  <div className="allergy-grid">
+                    <div className="allergy-item"><div className="ai">🐟</div><div><strong>{t.ordFish}</strong><br/><span style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>{t.ordFishD}</span></div></div>
+                    <div className="allergy-item"><div className="ai">🔬</div><div><strong>{t.ordVas}</strong><br/><span style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>{t.ordVasD}</span></div></div>
+                    <div className="allergy-item"><div className="ai">💉</div><div><strong>{t.ordPrior}</strong><br/><span style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>{t.ordPriorD}</span></div></div>
+                    <div className="allergy-item"><div className="ai">🧪</div><div><strong>{t.ordNPH}</strong><br/><span style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>{t.ordNPHD}</span></div></div>
+                  </div>
+                </div>
+                <div className="order-section"><div className="order-section-title">📊 {t.ordMonitor}</div>
+                  <div className="monitor-list">
+                    <div className="monitor-item"><div className="mi">🫀</div><div className="ml">{t.ordBP}/{t.ordHR}</div><div style={{fontSize:'.7rem',color:'var(--text-muted)',marginTop:2}}>{t.ordFreq}</div></div>
+                    <div className="monitor-item"><div className="mi">🫁</div><div className="ml">{t.ordSpO2}</div><div style={{fontSize:'.7rem',color:'var(--text-muted)',marginTop:2}}>{t.ordFreq}</div></div>
+                    <div className="monitor-item"><div className="mi">🔬</div><div className="ml">{t.ordAPTT}</div><div style={{fontSize:'.7rem',color:'var(--text-muted)',marginTop:2}}>{t.ordAPTTpost}</div></div>
+                  </div>
+                </div>
+                <div className="order-section"><div className="order-section-title">🚨 {t.ordSE}</div>
+                  <div className="se-box"><strong>{t.ordSymptom}:</strong> {t.ordSEtext}<br/><br/><strong>{t.ordResus}:</strong> {t.ordEmerg}</div>
+                </div>
+                <div className="alert alert-orange"><span className="alert-icon">🔄</span><div>{t.ordRebound}</div></div>
+                {!ufh&&enoxProt&&(<div className="alert alert-info"><span className="alert-icon">ℹ️</span><div>{t.ordEnoxNote}</div></div>)}
+                <button className={'copy-btn'+(copied?' copied':'')} onClick={doCopy}>{copied?'✓ '+t.ordCopied:'📋 '+t.ordCopy}</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ===== 4Ts + HIT MANAGEMENT TAB ===== */}
+      {tab==='hit4ts'&&(
+        <div className="animate-in">
+          {/* 4Ts Calculator */}
+          <div className="card">
+            <div className="card-header"><div className="card-icon" style={{background:'#fef2f2',color:'#dc2626'}}>🔬</div><h2>{t.hit4ts}</h2></div>
+            <div className="card-body">
+              <div className="score-grid">
+                <div className="form-group"><label>{t.thrombocytopenia}</label><select value={fT.tc} onChange={e=>setFT(p=>({...p,tc:e.target.value}))}><option value="0">0 — {t.tcOpts[0]}</option><option value="1">1 — {t.tcOpts[1]}</option><option value="2">2 — {t.tcOpts[2]}</option></select></div>
+                <div className="form-group"><label>{t.timing}</label><select value={fT.tm} onChange={e=>setFT(p=>({...p,tm:e.target.value}))}><option value="0">0 — {t.tmOpts[0]}</option><option value="1">1 — {t.tmOpts[1]}</option><option value="2">2 — {t.tmOpts[2]}</option></select></div>
+                <div className="form-group"><label>{t.thrombosis}</label><select value={fT.th} onChange={e=>setFT(p=>({...p,th:e.target.value}))}><option value="0">0 — {t.thOpts[0]}</option><option value="1">1 — {t.thOpts[1]}</option><option value="2">2 — {t.thOpts[2]}</option></select></div>
+                <div className="form-group"><label>{t.otherCauses}</label><select value={fT.oc} onChange={e=>setFT(p=>({...p,oc:e.target.value}))}><option value="0">0 — {t.ocOpts[0]}</option><option value="1">1 — {t.ocOpts[1]}</option><option value="2">2 — {t.ocOpts[2]}</option></select></div>
+                <div className={'score-result '+hitProb.cls}>
+                  <div className="score-number">{hitSc}</div>
+                  <div style={{fontSize:'.8rem',color:'inherit',opacity:.7,marginTop:4}}>{t.score}: {hitSc}/8</div>
+                  <div className="score-label">{hitProb.text}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Diagnostic Action Based on Score */}
+          <div className={'card pathway-card animate-in'}>
+            <div className="card-header"><div className="card-icon">🗺️</div><h2>{t.hitPathTitle}</h2></div>
+            <div className="card-body">
+              {/* Action based on score */}
+              <div className="step-box" style={{borderColor: hitProb.level==='low'?'var(--success-border)':hitProb.level==='int'?'var(--warning-border)':'var(--danger-border)', background: hitProb.level==='low'?'var(--success-light)':hitProb.level==='int'?'var(--warning-light)':'var(--danger-light)'}}>
+                <div className="step-title" style={{color: hitProb.level==='low'?'var(--success)':hitProb.level==='int'?'#d97706':'var(--danger)'}}>
+                  {hitProb.level==='low'?'🟢':hitProb.level==='int'?'🟡':'🔴'} {t.hitDx}
+                </div>
+                <div className="step-content" style={{whiteSpace:'pre-wrap'}}>{hitActionText}</div>
+              </div>
+
+              {/* ICU Warning */}
+              {hitProb.level==='low'&&(
+                <div className="alert alert-danger">
+                  <span className="alert-icon">⚠️</span>
+                  <div><strong>CAUTION</strong><br/>{t.icuWarning}</div>
+                </div>
+              )}
+
+              {/* 3 Do's, 3 Don'ts, 3 Diagnostics */}
+              {hitSc>=4&&(
+                <>
+                <div style={{marginTop:16,marginBottom:12,fontSize:'.9rem',fontWeight:600,color:'var(--text)'}}>{t.hitMgmtTitle}</div>
+                <div className="ddd-grid">
+                  <div className="ddd-box do-box">
+                    <h3>✅ 3 Do's</h3>
+                    <ul className="ddd-list"><li>{t.do1}</li><li>{t.do2}</li><li>{t.do3}</li></ul>
+                  </div>
+                  <div className="ddd-box dont-box">
+                    <h3>🚫 3 Don'ts</h3>
+                    <ul className="ddd-list"><li>{t.dont1}</li><li>{t.dont2}</li><li>{t.dont3}</li></ul>
+                  </div>
+                  <div className="ddd-box diag-box">
+                    <h3>🔬 3 Diagnostics</h3>
+                    <ul className="ddd-list"><li>{t.diag1}</li><li>{t.diag2}</li><li>{t.diag3}</li></ul>
+                  </div>
+                </div>
+                </>
+              )}
+
+              {/* Lab Investigations */}
+              {hitSc>=4&&(
+                <div style={{marginTop:20}}>
+                  <div style={{fontSize:'.9rem',fontWeight:600,color:'var(--text)',marginBottom:12}}>🧪 {t.hitLabTitle}</div>
+                  <div className="step-box" style={{borderColor:'var(--purple-border)'}}>
+                    <div className="step-title lab">🔍 {t.hitScreening}</div>
+                    <div className="step-content" style={{whiteSpace:'pre-wrap'}}>{t.hitScreenList}</div>
+                  </div>
+                  <div className="step-box" style={{borderColor:'var(--orange-border)'}}>
+                    <div className="step-title drug">🧫 {t.hitConfirm}</div>
+                    <div className="step-content" style={{whiteSpace:'pre-wrap'}}>{t.hitConfirmList}</div>
+                  </div>
+                  <div className="alert alert-purple">
+                    <span className="alert-icon">🇹🇭</span>
+                    <div>{t.hitConfirmNote}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Alternative Anticoagulants */}
+              {hitSc>=4&&(
+                <div style={{marginTop:20}}>
+                  <div style={{fontSize:'.9rem',fontWeight:600,color:'var(--text)',marginBottom:12}}>💊 {t.hitAltTitle}</div>
+                  <div className="step-box" style={{borderColor:'var(--success-border)',background:'var(--success-light)'}}>
+                    <div className="step-title do">💉 {t.fondaTitle}</div>
+                    <div className="step-content" style={{whiteSpace:'pre-wrap',fontFamily:"'JetBrains Mono',monospace",fontWeight:500}}>{t.fondaDose}</div>
+                  </div>
+                  <div className="step-box">
+                    <div className="step-title drug">💊 {t.doacTitle}</div>
+                    <table className="drug-table">
+                      <thead><tr><th>Drug</th><th>{lang==='th'?'ไม่มี thrombosis':'No thrombosis'}</th><th>{lang==='th'?'มี thrombosis':'With thrombosis'}</th></tr></thead>
+                      <tbody>
+                        <tr><td className="drug-name">Rivaroxaban</td><td>15 mg BID → PLT ปกติ → 20 mg OD</td><td>15 mg BID × 3 wk → 20 mg OD</td></tr>
+                        <tr><td className="drug-name">Apixaban</td><td>10 mg BID → PLT ปกติ → 5 mg BID</td><td>10 mg BID × 1 wk → 5 mg BID</td></tr>
+                        <tr><td className="drug-name">Dabigatran</td><td>150 mg BID → PLT ปกติ</td><td>Fondaparinux ≥5d → 150 mg BID</td></tr>
+                        <tr><td className="drug-name">Edoxaban</td><td>60 mg (or 30 mg) OD → PLT ปกติ</td><td>Fondaparinux ≥5d → 60/30 mg OD</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="alert alert-warning">
+                    <span className="alert-icon">⚠️</span>
+                    <div><strong>Warfarin:</strong> {t.warfarinNote}<br/><strong>{t.durationNoThromb}</strong> | <strong style={{color:'var(--danger)'}}>{t.durationThromb}</strong></div>
+                  </div>
+                  <div className="alert alert-info">
+                    <span className="alert-icon">📈</span>
+                    <div>{t.plateletRecovery}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="disclaimer">{t.disclaimer}</div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
