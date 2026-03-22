@@ -92,7 +92,10 @@
   .prob-low{color:var(--success);border-color:var(--success-border);background:var(--success-light)}
   .prob-intermediate{color:#d97706;border-color:var(--warning-border);background:var(--warning-light)}
   .prob-high{color:var(--danger);border-color:var(--danger-border);background:var(--danger-light)}
-  .disclaimer{text-align:center;padding:24px 16px;font-size:.75rem;color:var(--text-muted);line-height:1.6}
+  .disclaimer{text-align:center;padding:24px 16px 12px;font-size:.75rem;color:var(--text-muted);line-height:1.6}
+  .app-footer{text-align:center;padding:12px 16px 24px;font-size:.75rem;color:var(--text-muted);line-height:1.6;border-top:1px solid var(--border);margin-top:4px}
+  .app-footer a{color:var(--accent);font-weight:500;text-decoration:none}
+  .app-footer a:hover{text-decoration:underline}
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   .animate-in{animation:fadeIn .3s ease-out}
   /* Order card */
@@ -204,7 +207,7 @@ en:{
   otherCauses:'Other causes for thrombocytopenia',ocOpts:['Definite other cause present','Possible other cause','No other apparent cause'],
   score:'Total Score',probability:'Probability',lowProb:'Low probability (0-3)',intProb:'Intermediate probability (4-5)',highProb:'High probability (6-8)',
   activePercent:'active residual',
-  disclaimer:'Clinical decision support only. Verify with current guidelines and clinical judgment. Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',
+  disclaimer:'Clinical decision support only. Verify with current guidelines and clinical judgment. Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',
   // Order
   ordTitle:'Protamine Order',ordDrug:'Drug & Preparation',ordRate:'Rate',ordAllergy:'Allergy Screening',ordMonitor:'Monitoring',ordSE:'Side Effects',
   ordCopy:'Copy Order',ordCopied:'Copied!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'Dilute in',ordNSS:'NSS or D5W 50-100 mL',
@@ -278,7 +281,7 @@ th:{
   otherCauses:'สาเหตุอื่นของ thrombocytopenia',ocOpts:['มีสาเหตุอื่นชัดเจน','อาจมีสาเหตุอื่น','ไม่พบสาเหตุอื่น'],
   score:'คะแนนรวม',probability:'ความน่าจะเป็น',lowProb:'โอกาสต่ำ (0-3)',intProb:'โอกาสปานกลาง (4-5)',highProb:'โอกาสสูง (6-8)',
   activePercent:'ฤทธิ์คงเหลือ',
-  disclaimer:'ใช้เพื่อช่วยตัดสินใจทางคลินิกเท่านั้น ตรวจสอบกับแนวทางปัจจุบันเสมอ Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',
+  disclaimer:'ใช้เพื่อช่วยตัดสินใจทางคลินิกเท่านั้น ตรวจสอบกับแนวทางปัจจุบันเสมอ Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',
   ordTitle:'คำสั่งให้ Protamine',ordDrug:'ตัวยาและการเตรียม',ordRate:'อัตราการให้',ordAllergy:'คัดกรองแพ้ยา',ordMonitor:'เฝ้าระวัง',ordSE:'อาการข้างเคียง',
   ordCopy:'คัดลอกคำสั่ง',ordCopied:'คัดลอกแล้ว!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'ผสมใน',ordNSS:'NSS หรือ D5W 50-100 mL',
   ordIVslow:'IV drip ใน',ordMinUnit:'นาที',ordMaxRate:'สูงสุด: 5 mg/นาที (≤20 mg ทุก 2 นาที)',ordMaxDose:'สูงสุดต่อครั้ง: 50 mg',
@@ -745,6 +748,10 @@ function App(){
       )}
 
       <div className="disclaimer">{t.disclaimer}</div>
+      <footer className="app-footer">
+        {t.footerPrefix}
+        <a href="mailto:Uradev222@gmail.com">{t.footerCredit}</a>
+      </footer>
     </div>
   );
 }
