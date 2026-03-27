@@ -161,6 +161,40 @@
   .drug-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top}
   .drug-table tr:last-child td{border-bottom:none}
   .drug-table .drug-name{font-weight:600;color:var(--text)}
+  /* Periop styles */
+  .periop-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:8px}
+  .periop-table th{background:var(--surface-alt);padding:10px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);color:var(--text-secondary);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .periop-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.6}
+  .periop-table tr:last-child td{border-bottom:none}
+  .periop-table .sx-type{font-weight:600;color:var(--text);white-space:nowrap}
+  .periop-table .dose-cell{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--accent)}
+  .periop-table tr:hover td{background:var(--accent-light)}
+  .timeline-card{border:2px solid var(--info-border)}
+  .timeline-card .card-header{background:linear-gradient(135deg,#0ea5e9,#0284c7);border-bottom:none}
+  .timeline-card .card-header h2{color:#fff}
+  .timeline-card .card-header .card-icon{background:rgba(255,255,255,.2);color:#fff}
+  .tl-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border)}
+  .tl-row:last-child{border-bottom:none}
+  .tl-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .tl-icon.preop{background:var(--warning-light);border:1px solid var(--warning-border)}
+  .tl-icon.postop{background:var(--success-light);border:1px solid var(--success-border)}
+  .tl-body{flex:1}
+  .tl-drug{font-weight:600;color:var(--text);font-size:.875rem}
+  .tl-detail{font-size:.8rem;color:var(--text-secondary);margin-top:4px;line-height:1.6}
+  .tl-time{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--danger);font-size:.85rem}
+  .noload-box{border:2px solid var(--orange-border);border-radius:var(--radius);background:var(--orange-light);padding:16px;margin-bottom:12px}
+  .noload-title{font-size:.85rem;font-weight:700;color:#9a3412;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .noload-content{font-size:.825rem;line-height:1.7;color:#78350f}
+  .noload-content strong{color:#7c2d12}
+  .prophylaxis-card{border:2px solid var(--success-border)}
+  .prophylaxis-card .card-header{background:linear-gradient(135deg,#059669,#047857);border-bottom:none}
+  .prophylaxis-card .card-header h2{color:#fff}
+  .prophylaxis-card .card-header .card-icon{background:rgba(255,255,255,.2);color:#fff}
+  .periop-sub-tabs{display:flex;gap:4px;margin-bottom:16px}
+  .periop-sub-tab{padding:8px 14px;border:1.5px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer;color:var(--text-secondary);transition:all .15s;white-space:nowrap}
+  .periop-sub-tab:hover{background:var(--surface-alt);border-color:var(--accent)}
+  .periop-sub-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .dur-badge{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:12px;background:var(--info-light);border:1px solid var(--info-border);color:#0369a1;font-weight:500;margin-left:4px}
 </style>
 </head>
 <body>
@@ -224,6 +258,75 @@ en:{
   ordRebound:'Heparin rebound: effect may recur 2-8 hr post-protamine — reassess aPTT.',
   ordEnoxNote:'Enoxaparin: protamine neutralizes ~60% anti-Xa. Second dose 0.5 mg/1 mg enoxaparin if needed.',
   ordVialNote:'vial(s) — 5 mL = 50 mg each',
+  // Periop & Prophylaxis — Caprini per hospital protocol IO2024
+  periop:'Periop / Prophylaxis',
+  periopSubCaprini:'Caprini Score',periopSubTimeline:'Hold / Resume',periopSubNoLoad:'UFH No-Loading',
+  capTitle:'Caprini VTE Risk Assessment',capReset:'Reset',
+  cap1pt:'1 Point Each',cap2pt:'2 Points Each',cap3pt:'3 Points Each',cap5pt:'5 Points Each',
+  // 1-point
+  capAge4160:'Age 41–60 years',capMinorSx:'Minor surgery (<45 min)',capPriorMajorSx:'Past major surgery (>45 min) within 1 month',capVaricose:'Visible varicose vein',capIBD:'Inflammatory bowel disease',capSwollenLegs:'Swollen legs (current)',capObesity:'BMI > 25 kg/m²',capAMI:'Acute MI',capCHF:'Congestive heart failure',capSepsis:'Serious infection (e.g. pneumonia)',capCOPD:'COPD',capBedMed:'Bed rest / cast (<72 hours)',capPregnancy:'Pregnancy or postpartum (6 weeks)',capStillborn:'Unexplained stillborn / recurrent spontaneous abortion (>3 times)',capOCP:'Oral contraception / hormonal replacement therapy',
+  // 2-point
+  capAge6174:'Age 61–74 years',capMajorSx:'Major surgery incl. arthroscopic & laparoscopic (>45 min)',capMalig:'Previous / current malignancy (excl. skin cancer, not melanoma)',capBedConf:'Confined to bed (>72 hours)',capImmobCast:'Immobilizing cast within the last month',capCVC:'Central venous access within the last month',
+  // 3-point
+  capAge75:'Age ≥ 75 years',capSVT:'History of VTE (DVT/PE)',capFamHx:'Family history of VTE',capFVL:'Positive Factor V Leiden',capPT20210:'Positive Prothrombin 20210A',capLAC:'Positive Lupus anticoagulant',capACL:'Elevated Anticardiolipin antibodies',capHomocys:'Elevated serum homocysteine',capHIT:'Heparin-induced thrombocytopenia (HIT)',capOtherThrombo:'Other congenital thrombophilia',capSpinalFx:'Spinal fracture',capGCS:'GCS < 8 more than 4 hours',
+  // 5-point
+  capArthro5:'Hip / knee arthroplasty',capHipFx:'Hip / pelvis / complex leg fracture',capMultiTrauma:'Multiple trauma',capSCI:'Acute spinal cord injury with paralysis',capStroke:'Stroke with paralysis',
+  // Risk levels — match hospital table
+  capVeryLow:'Very Low (0) — VTE risk <0.5%',capLowRisk:'Low (1–2) — VTE risk ~1.5%',capModRisk:'Moderate (3–4) — VTE risk ~3%',capHighRisk:'High (≥5) — VTE risk ≥6%',
+  capRecVeryLow:'No VTE prophylaxis (ACCP 1B). Early mobilization.',
+  capRecLow:'Mechanical prophylaxis (ACCP 2C): IPC or GCS + Early mobilization.',
+  capRecMod:'Pharmacological prophylaxis (ACCP 2B) OR Mechanical prophylaxis (ACCP 2C) + Early mobilization.',
+  capRecHigh:'Pharmacological + Mechanical prophylaxis (ACCP 1B) + Early mobilization.',
+  // Bleeding risk
+  capBleedRisk:'Bleeding risk',capBleedLow:'Low postop bleeding risk',capBleedHigh:'High postop bleeding risk',
+  capHighBleedNote:'High bleeding risk → use IPC only until bleeding risk diminishes, then add Enoxaparin.',
+  // Enoxaparin dosing
+  capEnoxTitle:'Enoxaparin Dosing (Prophylactic)',
+  capEnoxWt1:'< 40 kg',capEnoxWt2:'40–150 kg',capEnoxWt3:'> 150 kg',
+  capEnoxD1:'0.2 mL (20 mg) SC once daily',capEnoxD2:'0.4 mL (40 mg) SC once daily',capEnoxD3:'Consult hematologist',
+  capEnoxCrclNote:'Dosing shown for CrCl ≥ 30 mL/min. If CrCl < 30 → consult or adjust.',
+  capEnoxPreop:'Pre-op: Start Enoxaparin after admission; hold 12 hours before surgery (if evening before, give at 18:00).',
+  capEnoxPostop:'Post-op: Resume if no bleeding concern. Give at 06:00 or 18:00.',
+  // Extended prophylaxis
+  capExtTitle:'Extended Anticoagulant Prophylaxis',
+  capExtAbdCancer:'Abdominal pelvic cancer surgery → Enoxaparin 28 days postop',
+  capExtHipArthro:'Hip arthroplasty / Hip fracture surgery → 35 days postop (then DOAC or Aspirin)',
+  capExtKneeArthro:'Knee arthroplasty → 10 days postop (then DOAC or Aspirin)',
+  capExtOther:'All other surgeries → 7–14 days if moderate/high VTE risk and able to ambulate',
+  capExtDOAC:'DOACs (CrCl ≥ 30): Dabigatran 150–220 mg OD, Rivaroxaban 10 mg OD, Apixaban 2.5 mg BID, Edoxaban 30 mg OD',
+  capExtASA:'Aspirin: ASA (81) 1×1 or 1×2 (alternative)',
+  // Contraindications
+  capContraTitle:'Contraindications',capContraPharm:'Pharmacological VTE prophylaxis',capContraIPC:'IPC',
+  capCI1:'Concurrent antiplatelet / therapeutic anticoagulant / thrombolytic',capCI2:'Allergy to heparin/LMWH',capCI3:'Heparin induced thrombocytopenia (HIT)',capCI4:'INR > 1.5 or Platelet < 100,000',capCI5:'Untreated bleeding disorder',capCI6:'Severe renal disease (GFR < 30)',capCI7:'Active bleeding anywhere',capCI8:'Prior peri-procedural bleeding (same operation)',capCI9:'Uncontrolled hypertension (BP ≥ 180/110 mmHg)',capCI10:'Lumbar puncture / epidural / spinal analgesia expected within 12 hr (24 hr if traumatic)',capCI11:'GI/GU bleed or hemorrhagic stroke within 3 months',capCI12:'Recent intraocular / spinal / intracranial surgery',capCI13:'Severe trauma surgery to head/spinal cord/extremities with hemorrhage within 4 weeks',
+  capCIIPC1:'Current acute DVT (diagnosed within 3 months)',capCIIPC2:'ABI < 0.8 or absent pulse',capCIIPC3:'Severe leg edema from congestive heart failure',capCIIPC4:'Peripheral neuropathy',capCIIPC5:'Leg deformity',capCIIPC6:'Cellulitis / wound / severe skin lesion on leg',
+  // CBC monitoring
+  capCBCNote:'Check CBC day 7 after starting LMWH. If platelet drops >50% from baseline AND/OR platelet <100,000 → consult hematologist to rule out HIT.',
+  capRef:'Ref: Caprini JA. Dis Mon 2005; ACCP 2012; Hospital VTE Protocol IO2024.',
+  holdResumeTitle:'Perioperative Hold & Resume Guide',
+  holdTitle:'Pre-operative — When to HOLD',holdPostTitle:'Post-operative — When to RESUME',
+  holdEnoxProph:'Enoxaparin (prophylactic)',holdEnoxTher:'Enoxaparin (therapeutic)',
+  holdTinz:'Tinzaparin / Bemiparin',holdFonda:'Fondaparinux',holdUFHiv:'UFH IV infusion',holdUFHsc:'UFH SC (prophylactic)',
+  holdEnoxProphTime:'12h before surgery',holdEnoxTherTime:'24h before surgery',
+  holdTinzTime:'24h before surgery',holdFondaTime:'36–48h before surgery (long t½)',
+  holdUFHivTime:'4–6h before surgery; check aPTT',holdUFHscTime:'8–12h before surgery',
+  holdNote:'Timing based on normal renal function. Prolonged hold may be needed if CrCl <30 mL/min.',
+  resumeLowRisk:'Low bleeding risk surgery',resumeHighRisk:'High bleeding risk surgery',
+  resumeLowProph:'6–12h postop',resumeLowTher:'24h postop',
+  resumeHighProph:'24–48h postop',resumeHighTher:'48–72h postop',
+  resumeNote:'Hemostasis must be secured before restarting. Reassess if drain output is significant.',
+  resumeEpiNote:'Epidural/spinal catheter: wait ≥12h after last LMWH before removal; restart LMWH ≥4h after catheter removal.',
+  noLoadTitle:'UFH Infusion WITHOUT Loading Dose',
+  noLoadDesc:'In certain clinical scenarios, UFH infusion is started at a reduced rate WITHOUT an IV bolus to minimize bleeding risk.',
+  noLoadWhen:'When to omit loading dose',
+  noLoadInd1:'Post-thrombolysis (e.g., after tPA for PE/stroke)',noLoadInd2:'Perioperative bridging (high bleeding risk)',noLoadInd3:'Post-cardiac/neurosurgery',noLoadInd4:'Concurrent GP IIb/IIIa inhibitor',noLoadInd5:'Recent surgery / active bleeding risk',
+  noLoadProtocol:'Protocol — No bolus, reduced infusion',
+  noLoadRate1:'Post-thrombolysis: 12 U/kg/hr (max 1,000 U/hr), no bolus',
+  noLoadRate2:'Periop bridging: 10–12 U/kg/hr, no bolus. Titrate to aPTT ratio 1.5–2.5',
+  noLoadRate3:'Post-cardiac surgery: 10–15 U/kg/hr, per local protocol',
+  noLoadRate4:'With GP IIb/IIIa: 50–70 U/kg bolus (or none) + 12 U/kg/hr',
+  noLoadMonitor:'Monitoring: aPTT 6h after start → adjust per nomogram. Target aPTT ratio 1.5–2.5 (or per protocol).',
+  noLoadMixNote:'Mixing same as standard: 25,000 U in 250 mL NSS/D5W (100 U/mL) or 500 mL (50 U/mL).',
+  noLoadCalcTitle:'No-load UFH calculator',noLoadCalcRate:'Rate (U/kg/hr)',noLoadCalcResult:'Calculated infusion rate',
   // HIT Management
   hitPathTitle:'HIT Diagnostic & Management Pathway',
   hitDx:'Diagnostic Approach',
@@ -297,6 +400,75 @@ th:{
   ordRebound:'Heparin rebound: ฤทธิ์อาจกลับใน 2-8 ชม. — ติดตาม aPTT',
   ordEnoxNote:'Enoxaparin: protamine แก้ anti-Xa ~60% อาจให้ dose ที่สอง 0.5 mg/enoxaparin 1 mg',
   ordVialNote:'vial — 5 mL = 50 mg',
+  // Periop & Prophylaxis — Caprini per hospital protocol IO2024
+  periop:'Periop / Prophylaxis',
+  periopSubCaprini:'Caprini Score',periopSubTimeline:'Hold / Resume',periopSubNoLoad:'UFH ไม่ loading',
+  capTitle:'ประเมินความเสี่ยง VTE ด้วย Caprini Score',capReset:'รีเซ็ต',
+  cap1pt:'1 คะแนน (แต่ละข้อ)',cap2pt:'2 คะแนน (แต่ละข้อ)',cap3pt:'3 คะแนน (แต่ละข้อ)',cap5pt:'5 คะแนน (แต่ละข้อ)',
+  // 1-point
+  capAge4160:'อายุ 41–60 ปี',capMinorSx:'ผ่าตัดเล็ก (<45 นาที)',capPriorMajorSx:'ประวัติผ่าตัดใหญ่ (>45 นาที) ภายใน 1 เดือน',capVaricose:'เส้นเลือดขอด (varicose vein)',capIBD:'โรคลำไส้อักเสบ (IBD)',capSwollenLegs:'ขาบวม (ปัจจุบัน)',capObesity:'BMI > 25 kg/m²',capAMI:'กล้ามเนื้อหัวใจตายเฉียบพลัน (Acute MI)',capCHF:'หัวใจวาย (CHF)',capSepsis:'ติดเชื้อรุนแรง เช่น ปอดอักเสบ',capCOPD:'COPD',capBedMed:'นอนเตียง / เฝือก (<72 ชม.)',capPregnancy:'ตั้งครรภ์ หรือหลังคลอด (6 สัปดาห์)',capStillborn:'ทารกเสียชีวิตในครรภ์ไม่ทราบสาเหตุ / แท้งซ้ำ (>3 ครั้ง)',capOCP:'ยาคุมกำเนิด / ฮอร์โมนทดแทน',
+  // 2-point
+  capAge6174:'อายุ 61–74 ปี',capMajorSx:'ผ่าตัดใหญ่ รวมส่องกล้อง (>45 นาที)',capMalig:'มะเร็ง (ปัจจุบัน/เคยเป็น, ไม่รวมมะเร็งผิวหนังที่ไม่ใช่ melanoma)',capBedConf:'นอนเตียง (>72 ชม.)',capImmobCast:'เฝือกยึดแน่น ภายใน 1 เดือน',capCVC:'Central venous access ภายใน 1 เดือน',
+  // 3-point
+  capAge75:'อายุ ≥ 75 ปี',capSVT:'ประวัติ VTE (DVT/PE)',capFamHx:'ประวัติครอบครัว VTE',capFVL:'Positive Factor V Leiden',capPT20210:'Positive Prothrombin 20210A',capLAC:'Positive Lupus anticoagulant',capACL:'Elevated Anticardiolipin Ab',capHomocys:'Elevated serum homocysteine',capHIT:'Heparin-induced thrombocytopenia (HIT)',capOtherThrombo:'Thrombophilia แต่กำเนิดอื่น',capSpinalFx:'กระดูกสันหลังหัก (Spinal fracture)',capGCS:'GCS < 8 นานกว่า 4 ชม.',
+  // 5-point
+  capArthro5:'ผ่าตัดเปลี่ยนข้อสะโพก/เข่า (arthroplasty)',capHipFx:'กระดูกสะโพก/เชิงกราน/ขาหัก (complex)',capMultiTrauma:'อุบัติเหตุหลายระบบ (multiple trauma)',capSCI:'ไขสันหลังบาดเจ็บเฉียบพลัน มีอัมพาต',capStroke:'Stroke มีอัมพาต',
+  // Risk levels — match hospital table
+  capVeryLow:'ต่ำมาก (0) — VTE risk <0.5%',capLowRisk:'ต่ำ (1–2) — VTE risk ~1.5%',capModRisk:'ปานกลาง (3–4) — VTE risk ~3%',capHighRisk:'สูง (≥5) — VTE risk ≥6%',
+  capRecVeryLow:'ไม่ต้องให้ VTE prophylaxis (ACCP 1B) ลุกเดินเร็ว',
+  capRecLow:'Mechanical prophylaxis (ACCP 2C): IPC หรือ GCS + ลุกเดินเร็ว',
+  capRecMod:'Pharmacological prophylaxis (ACCP 2B) หรือ Mechanical prophylaxis (ACCP 2C) + ลุกเดินเร็ว',
+  capRecHigh:'Pharmacological + Mechanical prophylaxis (ACCP 1B) + ลุกเดินเร็ว',
+  // Bleeding risk
+  capBleedRisk:'ความเสี่ยงเลือดออก',capBleedLow:'ความเสี่ยงเลือดออกต่ำหลังผ่าตัด',capBleedHigh:'ความเสี่ยงเลือดออกสูงหลังผ่าตัด',
+  capHighBleedNote:'เสี่ยงเลือดออกสูง → ใช้ IPC อย่างเดียวก่อน เมื่อความเสี่ยงลดลงจึงเพิ่ม Enoxaparin',
+  // Enoxaparin dosing
+  capEnoxTitle:'ขนาดยา Enoxaparin (ป้องกัน)',
+  capEnoxWt1:'< 40 กก.',capEnoxWt2:'40–150 กก.',capEnoxWt3:'> 150 กก.',
+  capEnoxD1:'0.2 mL (20 mg) SC วันละครั้ง',capEnoxD2:'0.4 mL (40 mg) SC วันละครั้ง',capEnoxD3:'ปรึกษาอายุรแพทย์โรคเลือด',
+  capEnoxCrclNote:'ขนาดยาสำหรับ CrCl ≥ 30 mL/min. หาก CrCl < 30 → ปรึกษาหรือปรับขนาด',
+  capEnoxPreop:'ก่อนผ่าตัด: เริ่มยา Enoxaparin หลัง admit; หยุดก่อนผ่าตัด 12 ชม. (หากเย็นก่อนผ่า ให้เวลา 18.00 น.)',
+  capEnoxPostop:'หลังผ่าตัด: เริ่มยาเมื่อไม่มีเลือดออก ให้เวลา 06.00 หรือ 18.00 น.',
+  // Extended prophylaxis
+  capExtTitle:'Extended Anticoagulant Prophylaxis',
+  capExtAbdCancer:'ผ่าตัดมะเร็งช่องท้อง-เชิงกราน → Enoxaparin ครบ 28 วันหลังผ่าตัด',
+  capExtHipArthro:'ผ่าตัดข้อสะโพก / กระดูกสะโพกหัก → 35 วันหลังผ่าตัด (แล้วเปลี่ยนเป็น DOAC หรือ Aspirin)',
+  capExtKneeArthro:'ผ่าตัดเปลี่ยนข้อเข่า → 10 วันหลังผ่าตัด (แล้วเปลี่ยนเป็น DOAC หรือ Aspirin)',
+  capExtOther:'ผ่าตัดอื่น → 7–14 วัน หากเสี่ยง VTE ปานกลาง/สูง และเดินได้ตามปกติ',
+  capExtDOAC:'DOACs (CrCl ≥ 30): Dabigatran 150–220 mg OD, Rivaroxaban 10 mg OD, Apixaban 2.5 mg BID, Edoxaban 30 mg OD',
+  capExtASA:'Aspirin: ASA (81) 1×1 หรือ 1×2 (ทางเลือก)',
+  // Contraindications
+  capContraTitle:'ข้อห้ามใช้',capContraPharm:'Pharmacological VTE prophylaxis',capContraIPC:'IPC',
+  capCI1:'ใช้ antiplatelet / therapeutic anticoagulant / thrombolytic อยู่',capCI2:'แพ้ heparin/LMWH',capCI3:'Heparin induced thrombocytopenia (HIT)',capCI4:'INR > 1.5 หรือ Platelet < 100,000',capCI5:'Bleeding disorder ที่ยังไม่ได้รักษา',capCI6:'โรคไตรุนแรง (GFR < 30)',capCI7:'มีเลือดออกอยู่',capCI8:'เลือดออกจากผ่าตัดครั้งนี้',capCI9:'ความดันโลหิตสูงควบคุมไม่ได้ (BP ≥ 180/110)',capCI10:'LP / epidural / spinal analgesia ภายใน 12 ชม. (24 ชม. ถ้า traumatic insertion)',capCI11:'GI/GU bleed หรือ hemorrhagic stroke ภายใน 3 เดือน',capCI12:'ผ่าตัดตา / ไขสันหลัง / สมอง เร็วๆ นี้',capCI13:'ผ่าตัดใหญ่ศีรษะ/ไขสันหลัง/แขนขา มีเลือดออก ภายใน 4 สัปดาห์',
+  capCIIPC1:'DVT เฉียบพลัน (วินิจฉัยภายใน 3 เดือน)',capCIIPC2:'ABI < 0.8 หรือคลำชีพจรไม่ได้',capCIIPC3:'ขาบวมรุนแรงจากหัวใจวาย',capCIIPC4:'Peripheral neuropathy',capCIIPC5:'ขาผิดรูป (Leg deformity)',capCIIPC6:'Cellulitis / แผล / รอยโรคผิวหนังรุนแรงที่ขา',
+  // CBC monitoring
+  capCBCNote:'ตรวจ CBC วันที่ 7 หลังเริ่ม LMWH: หาก platelet ลดลง >50% จาก baseline และ/หรือ platelet < 100,000 → ปรึกษาอายุรแพทย์โรคเลือด เพื่อ rule out HIT',
+  capRef:'อ้างอิง: Caprini JA. Dis Mon 2005; ACCP 2012; VTE Protocol IO2024 โรงพยาบาล',
+  holdResumeTitle:'แนวทางหยุดยา/เริ่มยาก่อน-หลังผ่าตัด',
+  holdTitle:'ก่อนผ่าตัด — หยุดยาเมื่อใด',holdPostTitle:'หลังผ่าตัด — เริ่มยาเมื่อใด',
+  holdEnoxProph:'Enoxaparin (ขนาดป้องกัน)',holdEnoxTher:'Enoxaparin (ขนาดรักษา)',
+  holdTinz:'Tinzaparin / Bemiparin',holdFonda:'Fondaparinux',holdUFHiv:'UFH IV infusion',holdUFHsc:'UFH SC (ขนาดป้องกัน)',
+  holdEnoxProphTime:'12 ชม. ก่อนผ่าตัด',holdEnoxTherTime:'24 ชม. ก่อนผ่าตัด',
+  holdTinzTime:'24 ชม. ก่อนผ่าตัด',holdFondaTime:'36–48 ชม. ก่อนผ่าตัด (t½ ยาว)',
+  holdUFHivTime:'4–6 ชม. ก่อนผ่าตัด; ตรวจ aPTT',holdUFHscTime:'8–12 ชม. ก่อนผ่าตัด',
+  holdNote:'Timing อ้างอิงจากการทำงานของไตปกติ อาจต้องหยุดนานขึ้นหาก CrCl <30 mL/min',
+  resumeLowRisk:'ผ่าตัดเสี่ยงเลือดออกต่ำ',resumeHighRisk:'ผ่าตัดเสี่ยงเลือดออกสูง',
+  resumeLowProph:'6–12 ชม. หลังผ่าตัด',resumeLowTher:'24 ชม. หลังผ่าตัด',
+  resumeHighProph:'24–48 ชม. หลังผ่าตัด',resumeHighTher:'48–72 ชม. หลังผ่าตัด',
+  resumeNote:'ต้องมั่นใจว่าแผลหยุดซึมเลือดแล้วก่อนเริ่มยา ประเมินซ้ำหากมี drain output มาก',
+  resumeEpiNote:'Epidural/spinal catheter: รอ ≥12 ชม. หลัง LMWH ก่อนถอด; เริ่ม LMWH ≥4 ชม. หลังถอด catheter',
+  noLoadTitle:'UFH Infusion ไม่ให้ Loading Dose',
+  noLoadDesc:'ในบางสถานการณ์ทางคลินิก เริ่ม UFH infusion ด้วย rate ลดลง โดยไม่ให้ IV bolus เพื่อลดความเสี่ยงเลือดออก',
+  noLoadWhen:'เมื่อใดที่ไม่ให้ loading dose',
+  noLoadInd1:'หลังให้ยาละลายลิ่มเลือด (เช่น tPA สำหรับ PE/stroke)',noLoadInd2:'Perioperative bridging (เสี่ยงเลือดออกสูง)',noLoadInd3:'หลังผ่าตัดหัวใจ/สมอง',noLoadInd4:'ใช้ร่วมกับ GP IIb/IIIa inhibitor',noLoadInd5:'หลังผ่าตัด / มีความเสี่ยงเลือดออก',
+  noLoadProtocol:'Protocol — ไม่ bolus, infusion rate ลดลง',
+  noLoadRate1:'หลังละลายลิ่มเลือด: 12 U/kg/hr (สูงสุด 1,000 U/hr) ไม่ bolus',
+  noLoadRate2:'Periop bridging: 10–12 U/kg/hr ไม่ bolus ปรับตาม aPTT ratio 1.5–2.5',
+  noLoadRate3:'หลังผ่าตัดหัวใจ: 10–15 U/kg/hr ตาม protocol โรงพยาบาล',
+  noLoadRate4:'ร่วมกับ GP IIb/IIIa: bolus 50–70 U/kg (หรือไม่ bolus) + 12 U/kg/hr',
+  noLoadMonitor:'ติดตาม: aPTT 6 ชม. หลังเริ่ม → ปรับตาม nomogram เป้าหมาย aPTT ratio 1.5–2.5 (หรือตาม protocol)',
+  noLoadMixNote:'การผสมเหมือนมาตรฐาน: 25,000 U ใน NSS/D5W 250 mL (100 U/mL) หรือ 500 mL (50 U/mL)',
+  noLoadCalcTitle:'คำนวณ UFH ไม่ loading',noLoadCalcRate:'Rate (U/kg/hr)',noLoadCalcResult:'อัตรา infusion ที่คำนวณ',
   // HIT Management
   hitPathTitle:'แนวทางวินิจฉัยและจัดการ HIT',
   hitDx:'การวินิจฉัย',
@@ -337,6 +509,10 @@ function App(){
   const[agent,setAgent]=useState('enoxaparin');const[indication,setIndication]=useState('treatment');const[context,setContext]=useState('general');const[ufhCurrentRate,setUfhCurrentRate]=useState('');const[ufhCurrentAptt,setUfhCurrentAptt]=useState('');
   const[fT,setFT]=useState({tc:'0',tm:'0',th:'0',oc:'0'});
   const[copied,setCopied]=useState(false);
+  const[periopSub,setPeriopSub]=useState('caprini');
+  const[noLoadRate,setNoLoadRate]=useState('12');
+  // Caprini factors: key → point value
+  const[cap,setCap]=useState({});
   const t=L[lang];
   const crcl=useMemo(()=>cockcroftGault(+age,+weight,+scr,sex),[age,weight,scr,sex]);
   const autoH=useMemo(()=>elapsed(stopClk,curClk),[stopClk,curClk]);
@@ -423,6 +599,25 @@ function App(){
   const orderTxt=useMemo(()=>{if(!protDose)return '';const isE=!ufh&&enoxProt;return['=== PROTAMINE ORDER ===','Protamine sulfate '+protDose+' mg IV',vials?'('+vials.ml+' mL of 10 mg/mL)':'','Dilute in NSS/D5W 50-100 mL','IV drip over '+infTime+' min (max 5 mg/min)','Max single dose: 50 mg','','Indication: '+(isE?'Enoxaparin':'UFH')+' reversal',ufh?'Est. exposure: '+ufh.exp+' units ('+ufh.frac+'% active)':'',ufh?'Additional: '+ufh.add+' mg after 10-15 min':'','','ALLERGY: Fish allergy? Vasectomy? Prior protamine? NPH insulin?','','MONITOR: BP/HR/SpO2 q5min, aPTT 15min post-dose','Resuscitation equipment + epinephrine at bedside','','Heparin rebound may occur 2-8 hr post-protamine'].filter(Boolean).join('\n')},[protDose,ufh,enoxProt,vials,infTime]);
   const doCopy=useCallback(()=>{if(!orderTxt)return;navigator.clipboard.writeText(orderTxt).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)}).catch(()=>{})},[orderTxt]);
 
+  // Caprini Risk Assessment
+  const capToggle=useCallback((k,pts)=>{setCap(p=>{const n={...p};if(n[k])delete n[k];else n[k]=pts;return n})},[]);
+  const capScore=useMemo(()=>Object.values(cap).reduce((a,b)=>a+b,0),[cap]);
+  const capRisk=useMemo(()=>{
+    if(capScore===0) return {level:'verylow',cls:'prob-low'};
+    if(capScore<=2) return {level:'low',cls:'prob-low'};
+    if(capScore<=4) return {level:'moderate',cls:'prob-intermediate'};
+    return {level:'high',cls:'prob-high'};
+  },[capScore]);
+  const[bleedRisk,setBleedRisk]=useState('low');
+
+  const noLoadCalc=useMemo(()=>{
+    const wt=+weight, r=+noLoadRate;
+    if(!wt||wt<=0||!r||r<=0) return null;
+    const rateU=round(wt*r);
+    const maxRate = r>=12 ? Math.min(rateU,1000) : rateU;
+    return {rateU:maxRate, ml100:round(maxRate/100,1), ml50:round(maxRate/50,1)};
+  },[weight,noLoadRate]);
+
   // HIT action text based on score
   const hitActionText = useMemo(()=>{
     if(hitProb.level==='low') return t.hitLowAction;
@@ -455,6 +650,7 @@ function App(){
 
       <div className="tabs-nav">
         <button className={'tab-btn'+(tab==='therapy'?' active':'')} onClick={()=>setTab('therapy')}>{t.therapy}</button>
+        <button className={'tab-btn'+(tab==='periop'?' active':'')} onClick={()=>setTab('periop')}>{t.periop}</button>
         <button className={'tab-btn'+(tab==='reversal'?' active':'')} onClick={()=>setTab('reversal')}>{t.reversal}</button>
         <button className={'tab-btn'+(tab==='hit4ts'?' active':'')} onClick={()=>setTab('hit4ts')}>{t.hit4ts}</button>
       </div>
@@ -529,6 +725,329 @@ function App(){
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ===== PERIOP / PROPHYLAXIS TAB ===== */}
+      {tab==='periop'&&(
+        <div className="animate-in">
+          <div className="periop-sub-tabs">
+            <button className={'periop-sub-tab'+(periopSub==='caprini'?' active':'')} onClick={()=>setPeriopSub('caprini')}>🛡️ {t.periopSubCaprini}</button>
+            <button className={'periop-sub-tab'+(periopSub==='timeline'?' active':'')} onClick={()=>setPeriopSub('timeline')}>⏱️ {t.periopSubTimeline}</button>
+            <button className={'periop-sub-tab'+(periopSub==='noload'?' active':'')} onClick={()=>setPeriopSub('noload')}>💧 {t.periopSubNoLoad}</button>
+          </div>
+
+          {/* === CAPRINI VTE RISK ASSESSMENT === */}
+          {periopSub==='caprini'&&(
+            <div className="animate-in">
+              <div className="card prophylaxis-card">
+                <div className="card-header"><div className="card-icon">🛡️</div><h2>{t.capTitle}</h2></div>
+                <div className="card-body">
+                  {/* Score Result - sticky top */}
+                  <div className={'score-result '+capRisk.cls} style={{marginBottom:20,position:'sticky',top:0,zIndex:10,boxShadow:'var(--shadow-md)'}}>
+                    <div className="score-number">{capScore}</div>
+                    <div style={{fontSize:'.8rem',color:'inherit',opacity:.7,marginTop:4}}>{lang==='th'?'คะแนนรวม':'Total Score'}: {capScore}</div>
+                    <div className="score-label">{capRisk.level==='verylow'?t.capVeryLow:capRisk.level==='low'?t.capLowRisk:capRisk.level==='moderate'?t.capModRisk:t.capHighRisk}</div>
+                    <button onClick={()=>{setCap({});setBleedRisk('low')}} style={{marginTop:8,padding:'4px 14px',border:'1.5px solid currentColor',borderRadius:20,background:'transparent',color:'inherit',fontFamily:'inherit',fontSize:'.75rem',fontWeight:600,cursor:'pointer',opacity:.7}}>{t.capReset}</button>
+                  </div>
+
+                  {/* 1 Point Factors */}
+                  <div style={{fontSize:'.85rem',fontWeight:700,color:'var(--success)',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>🟢 {t.cap1pt}</div>
+                  <div className="allergy-grid" style={{marginBottom:20}}>
+                    {[['age4160',t.capAge4160],['minorSx',t.capMinorSx],['priorMajorSx',t.capPriorMajorSx],['varicose',t.capVaricose],['ibd',t.capIBD],['swollenLegs',t.capSwollenLegs],['obesity',t.capObesity],['ami',t.capAMI],['chf',t.capCHF],['sepsis',t.capSepsis],['copd',t.capCOPD],['bedMed',t.capBedMed],['pregnancy',t.capPregnancy],['stillborn',t.capStillborn],['ocp',t.capOCP]].map(([k,label])=>(
+                      <div key={k} className="allergy-item" style={{cursor:'pointer',borderColor:cap[k]?'var(--success)':'var(--border)',background:cap[k]?'var(--success-light)':'var(--surface)',transition:'all .15s'}} onClick={()=>capToggle(k,1)}>
+                        <div className="ai" style={{background:cap[k]?'var(--success)':'var(--surface-alt)',color:cap[k]?'#fff':'var(--text-muted)',transition:'all .15s'}}>{cap[k]?'✓':'☐'}</div>
+                        <div style={{fontSize:'.8rem',color:cap[k]?'var(--success)':'var(--text-secondary)',fontWeight:cap[k]?600:400}}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 2 Point Factors */}
+                  <div style={{fontSize:'.85rem',fontWeight:700,color:'#d97706',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>🟡 {t.cap2pt}</div>
+                  <div className="allergy-grid" style={{marginBottom:20}}>
+                    {[['age6174',t.capAge6174],['majorSx',t.capMajorSx],['malig',t.capMalig],['bedConf',t.capBedConf],['immobCast',t.capImmobCast],['cvc',t.capCVC]].map(([k,label])=>(
+                      <div key={k} className="allergy-item" style={{cursor:'pointer',borderColor:cap[k]?'var(--warning-border)':'var(--border)',background:cap[k]?'var(--warning-light)':'var(--surface)',transition:'all .15s'}} onClick={()=>capToggle(k,2)}>
+                        <div className="ai" style={{background:cap[k]?'var(--warning)':'var(--surface-alt)',color:cap[k]?'#fff':'var(--text-muted)',transition:'all .15s'}}>{cap[k]?'✓':'☐'}</div>
+                        <div style={{fontSize:'.8rem',color:cap[k]?'#92400e':'var(--text-secondary)',fontWeight:cap[k]?600:400}}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 3 Point Factors */}
+                  <div style={{fontSize:'.85rem',fontWeight:700,color:'var(--orange)',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>🟠 {t.cap3pt}</div>
+                  <div className="allergy-grid" style={{marginBottom:20}}>
+                    {[['age75',t.capAge75],['svt',t.capSVT],['famHx',t.capFamHx],['fvl',t.capFVL],['pt20210',t.capPT20210],['lac',t.capLAC],['acl',t.capACL],['homocys',t.capHomocys],['hitCap',t.capHIT],['otherThrombo',t.capOtherThrombo],['spinalFx',t.capSpinalFx],['gcs',t.capGCS]].map(([k,label])=>(
+                      <div key={k} className="allergy-item" style={{cursor:'pointer',borderColor:cap[k]?'var(--orange-border)':'var(--border)',background:cap[k]?'var(--orange-light)':'var(--surface)',transition:'all .15s'}} onClick={()=>capToggle(k,3)}>
+                        <div className="ai" style={{background:cap[k]?'var(--orange)':'var(--surface-alt)',color:cap[k]?'#fff':'var(--text-muted)',transition:'all .15s'}}>{cap[k]?'✓':'☐'}</div>
+                        <div style={{fontSize:'.8rem',color:cap[k]?'#9a3412':'var(--text-secondary)',fontWeight:cap[k]?600:400}}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 5 Point Factors */}
+                  <div style={{fontSize:'.85rem',fontWeight:700,color:'var(--danger)',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>🔴 {t.cap5pt}</div>
+                  <div className="allergy-grid" style={{marginBottom:20}}>
+                    {[['arthro5',t.capArthro5],['hipFx',t.capHipFx],['multiTrauma',t.capMultiTrauma],['sci',t.capSCI],['strokeCap',t.capStroke]].map(([k,label])=>(
+                      <div key={k} className="allergy-item" style={{cursor:'pointer',borderColor:cap[k]?'var(--danger-border)':'var(--border)',background:cap[k]?'var(--danger-light)':'var(--surface)',transition:'all .15s'}} onClick={()=>capToggle(k,5)}>
+                        <div className="ai" style={{background:cap[k]?'var(--danger)':'var(--surface-alt)',color:cap[k]?'#fff':'var(--text-muted)',transition:'all .15s'}}>{cap[k]?'✓':'☐'}</div>
+                        <div style={{fontSize:'.8rem',color:cap[k]?'#991b1b':'var(--text-secondary)',fontWeight:cap[k]?600:400}}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* ===== ACCP Recommendation Table ===== */}
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#eef2ff',color:'#4f46e5'}}>📊</div><h2>{lang==='th'?'ตาราง ACCP Guideline':'ACCP Guideline Table'}</h2></div>
+                <div className="card-body">
+                  <div style={{overflowX:'auto'}}>
+                  <table className="periop-table">
+                    <thead><tr><th>Caprini</th><th>0</th><th>1–2</th><th>3–4</th><th>≥5</th></tr></thead>
+                    <tbody>
+                      <tr><td className="sx-type">VTE risk</td><td style={{background:capScore===0?'var(--success-light)':''}}>{'<0.5%'}</td><td style={{background:capScore>=1&&capScore<=2?'var(--success-light)':''}}>~1.5%</td><td style={{background:capScore>=3&&capScore<=4?'var(--warning-light)':''}}>~3%</td><td style={{background:capScore>=5?'var(--danger-light)':''}}>{'≥6%'}</td></tr>
+                      <tr><td className="sx-type">{lang==='th'?'คำแนะนำ':'Recommendation'}</td><td style={{background:capScore===0?'var(--success-light)':''}}>{lang==='th'?'ไม่ต้อง prophylaxis (1B)':'No prophylaxis (1B)'}</td><td style={{background:capScore>=1&&capScore<=2?'var(--success-light)':''}}>{lang==='th'?'Mechanical (2C)':'Mechanical (2C)'}</td><td style={{background:capScore>=3&&capScore<=4?'var(--warning-light)':''}}>{lang==='th'?'Pharmacological (2B) หรือ Mechanical (2C)':'Pharmacological (2B) or Mechanical (2C)'}</td><td style={{background:capScore>=5?'var(--danger-light)':''}}>{lang==='th'?'Pharmacological ร่วมกับ Mechanical (1B)':'Pharmacological + Mechanical (1B)'}</td></tr>
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* ===== Bleeding Risk Toggle ===== */}
+              {capScore>=3&&(
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#fef2f2',color:'#dc2626'}}>🩸</div><h2>{t.capBleedRisk}</h2></div>
+                <div className="card-body">
+                  <div className="periop-sub-tabs">
+                    <button className={'periop-sub-tab'+(bleedRisk==='low'?' active':'')} onClick={()=>setBleedRisk('low')} style={{flex:1}}>🟢 {t.capBleedLow}</button>
+                    <button className={'periop-sub-tab'+(bleedRisk==='high'?' active':'')} onClick={()=>setBleedRisk('high')} style={{flex:1}}>🔴 {t.capBleedHigh}</button>
+                  </div>
+
+                  {/* Recommendation by risk + bleeding */}
+                  <div className="step-box" style={{borderColor:capRisk.cls.includes('high')?'var(--danger-border)':'var(--warning-border)',background:capRisk.cls.includes('high')?'var(--danger-light)':'var(--warning-light)'}}>
+                    <div className="step-title" style={{color:capRisk.cls.includes('high')?'var(--danger)':'#d97706'}}>
+                      {capRisk.level==='moderate'?'🟡':'🔴'} {capRisk.level==='moderate'?t.capModRisk:t.capHighRisk}
+                    </div>
+                    {bleedRisk==='low'?(
+                      <div className="step-content" style={{whiteSpace:'pre-wrap'}}>
+                        {'✅ Early mobilization\n'}
+                        {capRisk.level==='moderate'?('💉 Enoxaparin SC once daily OR IPC\n🦵 IPC to bilateral legs'):('💉 Enoxaparin SC once daily PLUS IPC\n🦵 IPC to bilateral legs')}
+                      </div>
+                    ):(
+                      <div className="step-content" style={{whiteSpace:'pre-wrap'}}>
+                        {'✅ Early mobilization\n🦵 IPC to bilateral legs\n'}
+                        <strong style={{color:'var(--danger)'}}>{'⚠️ '}{t.capHighBleedNote}</strong>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              )}
+
+              {/* ===== Enoxaparin Dosing ===== */}
+              {capScore>=3&&bleedRisk==='low'&&(
+              <div className="card" style={{border:'2px solid var(--accent)',borderColor:'#c7d2fe'}}>
+                <div className="card-header" style={{background:'linear-gradient(135deg,#4f46e5,#6366f1)',borderBottom:'none'}}><div className="card-icon" style={{background:'rgba(255,255,255,.2)',color:'#fff'}}>💉</div><h2 style={{color:'#fff'}}>{t.capEnoxTitle}</h2></div>
+                <div className="card-body">
+                  <div style={{overflowX:'auto'}}>
+                  <table className="periop-table">
+                    <thead><tr><th>{lang==='th'?'น้ำหนัก':'Weight'}</th><th>{lang==='th'?'ขนาดยา (CrCl ≥ 30)':'Dose (CrCl ≥ 30)'}</th></tr></thead>
+                    <tbody>
+                      <tr style={{background:weight&&+weight<40?'var(--accent-light)':''}}><td className="sx-type">{t.capEnoxWt1}</td><td className="dose-cell">{t.capEnoxD1}</td></tr>
+                      <tr style={{background:weight&&+weight>=40&&+weight<=150?'var(--accent-light)':''}}><td className="sx-type">{t.capEnoxWt2}</td><td className="dose-cell">{t.capEnoxD2}</td></tr>
+                      <tr style={{background:weight&&+weight>150?'var(--danger-light)':''}}><td className="sx-type">{t.capEnoxWt3}</td><td className="dose-cell" style={{color:'var(--danger)'}}>{t.capEnoxD3}</td></tr>
+                    </tbody>
+                  </table>
+                  </div>
+                  {weight&&(
+                    <div className="result-box accent" style={{marginTop:16}}>
+                      <div className="result-label">{lang==='th'?'ขนาดยาสำหรับน้ำหนัก '+weight+' kg':'Dose for weight '+weight+' kg'}</div>
+                      <div className="result-value" style={{fontSize:'1.1rem'}}>{+weight<40?t.capEnoxD1:+weight<=150?t.capEnoxD2:t.capEnoxD3}</div>
+                      {crcl&&crcl<30&&<div style={{marginTop:8,color:'var(--danger)',fontWeight:600,fontSize:'.85rem'}}>⚠️ CrCl {'<'} 30 — {t.capEnoxCrclNote}</div>}
+                    </div>
+                  )}
+                  <div className="alert alert-info" style={{marginTop:12}}><span className="alert-icon">⏰</span><div>{t.capEnoxPreop}<br/><br/>{t.capEnoxPostop}</div></div>
+                  <div className="alert alert-warning" style={{marginTop:8}}><span className="alert-icon">🔬</span><div>{t.capCBCNote}</div></div>
+                </div>
+              </div>
+              )}
+
+              {/* ===== Extended Prophylaxis ===== */}
+              {capScore>=3&&(
+              <div className="card" style={{border:'2px solid var(--purple-border)'}}>
+                <div className="card-header" style={{background:'linear-gradient(135deg,#7c3aed,#6d28d9)',borderBottom:'none'}}><div className="card-icon" style={{background:'rgba(255,255,255,.2)',color:'#fff'}}>📅</div><h2 style={{color:'#fff'}}>{t.capExtTitle}</h2></div>
+                <div className="card-body">
+                  <div className="step-box" style={{borderColor:'var(--danger-border)',background:'var(--danger-light)'}}>
+                    <div className="step-title" style={{color:'var(--danger)'}}>🏥 {lang==='th'?'มะเร็ง':'Cancer'}</div>
+                    <div className="step-content"><strong>{t.capExtAbdCancer}</strong></div>
+                  </div>
+                  <div className="step-box" style={{borderColor:'var(--purple-border)',background:'var(--purple-light)'}}>
+                    <div className="step-title" style={{color:'var(--purple)'}}>🦴 {lang==='th'?'ข้อสะโพก/กระดูกหัก':'Hip / Fracture'}</div>
+                    <div className="step-content"><strong>{t.capExtHipArthro}</strong></div>
+                  </div>
+                  <div className="step-box" style={{borderColor:'var(--info-border)',background:'var(--info-light)'}}>
+                    <div className="step-title" style={{color:'var(--info)'}}>🦵 {lang==='th'?'ข้อเข่า':'Knee'}</div>
+                    <div className="step-content"><strong>{t.capExtKneeArthro}</strong></div>
+                  </div>
+                  <div className="step-box">
+                    <div className="step-title" style={{color:'var(--text-secondary)'}}>🏥 {lang==='th'?'อื่นๆ':'Others'}</div>
+                    <div className="step-content">{t.capExtOther}</div>
+                  </div>
+                  <div className="alert alert-info" style={{marginTop:12}}><span className="alert-icon">💊</span><div><strong>DOAC/ASA:</strong><br/>{t.capExtDOAC}<br/>{t.capExtASA}</div></div>
+                </div>
+              </div>
+              )}
+
+              {/* ===== Contraindications ===== */}
+              <div className="card" style={{border:'2px solid var(--danger-border)'}}>
+                <div className="card-header" style={{background:'linear-gradient(135deg,#dc2626,#b91c1c)',borderBottom:'none'}}><div className="card-icon" style={{background:'rgba(255,255,255,.2)',color:'#fff'}}>🚫</div><h2 style={{color:'#fff'}}>{t.capContraTitle}</h2></div>
+                <div className="card-body">
+                  <div className="two-col">
+                    <div>
+                      <div style={{fontSize:'.85rem',fontWeight:700,color:'var(--danger)',marginBottom:10}}>🚫 {t.capContraPharm}</div>
+                      <ul className="clinical-notes">
+                        {[t.capCI1,t.capCI2,t.capCI3,t.capCI4,t.capCI5,t.capCI6,t.capCI7,t.capCI8,t.capCI9,t.capCI10,t.capCI11,t.capCI12,t.capCI13].map((ci,i)=>(<li key={i}>{ci}</li>))}
+                      </ul>
+                    </div>
+                    <div>
+                      <div style={{fontSize:'.85rem',fontWeight:700,color:'var(--orange)',marginBottom:10}}>🚫 {t.capContraIPC}</div>
+                      <ul className="clinical-notes">
+                        {[t.capCIIPC1,t.capCIIPC2,t.capCIIPC3,t.capCIIPC4,t.capCIIPC5,t.capCIIPC6].map((ci,i)=>(<li key={i}>{ci}</li>))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="info-box" style={{marginTop:12}}>{t.capRef}</div>
+            </div>
+          )}
+
+          {/* === HOLD / RESUME TIMELINE === */}
+          {periopSub==='timeline'&&(
+            <div className="animate-in">
+              {/* HOLD - Preop */}
+              <div className="card timeline-card">
+                <div className="card-header"><div className="card-icon">⏸️</div><h2>{t.holdTitle}</h2></div>
+                <div className="card-body">
+                  <div className="tl-row"><div className="tl-icon preop">💉</div><div className="tl-body"><div className="tl-drug">{t.holdEnoxProph}</div><div className="tl-detail"><span className="tl-time">{t.holdEnoxProphTime}</span></div></div></div>
+                  <div className="tl-row"><div className="tl-icon preop">💉</div><div className="tl-body"><div className="tl-drug">{t.holdEnoxTher}</div><div className="tl-detail"><span className="tl-time">{t.holdEnoxTherTime}</span></div></div></div>
+                  <div className="tl-row"><div className="tl-icon preop">💉</div><div className="tl-body"><div className="tl-drug">{t.holdTinz}</div><div className="tl-detail"><span className="tl-time">{t.holdTinzTime}</span></div></div></div>
+                  <div className="tl-row"><div className="tl-icon preop">💊</div><div className="tl-body"><div className="tl-drug">{t.holdFonda}</div><div className="tl-detail"><span className="tl-time">{t.holdFondaTime}</span></div></div></div>
+                  <div className="tl-row"><div className="tl-icon preop">💧</div><div className="tl-body"><div className="tl-drug">{t.holdUFHiv}</div><div className="tl-detail"><span className="tl-time">{t.holdUFHivTime}</span></div></div></div>
+                  <div className="tl-row"><div className="tl-icon preop">💧</div><div className="tl-body"><div className="tl-drug">{t.holdUFHsc}</div><div className="tl-detail"><span className="tl-time">{t.holdUFHscTime}</span></div></div></div>
+                  <div className="alert alert-warning" style={{marginTop:16}}><span className="alert-icon">⚠️</span><div>{t.holdNote}</div></div>
+                </div>
+              </div>
+
+              {/* RESUME - Postop */}
+              <div className="card" style={{border:'2px solid var(--success-border)'}}>
+                <div className="card-header" style={{background:'linear-gradient(135deg,#059669,#047857)',borderBottom:'none'}}><div className="card-icon" style={{background:'rgba(255,255,255,.2)',color:'#fff'}}>▶️</div><h2 style={{color:'#fff'}}>{t.holdPostTitle}</h2></div>
+                <div className="card-body">
+                  <div style={{overflowX:'auto'}}>
+                  <table className="periop-table">
+                    <thead><tr><th></th><th>{lang==='th'?'ขนาดป้องกัน':'Prophylactic dose'}</th><th>{lang==='th'?'ขนาดรักษา':'Therapeutic dose'}</th></tr></thead>
+                    <tbody>
+                      <tr><td className="sx-type" style={{display:'flex',alignItems:'center',gap:6}}><div className="tl-icon postop" style={{width:28,height:28,fontSize:12}}>🟢</div>{t.resumeLowRisk}</td><td className="dose-cell">{t.resumeLowProph}</td><td className="dose-cell">{t.resumeLowTher}</td></tr>
+                      <tr><td className="sx-type" style={{display:'flex',alignItems:'center',gap:6}}><div className="tl-icon preop" style={{width:28,height:28,fontSize:12}}>🟡</div>{t.resumeHighRisk}</td><td className="dose-cell">{t.resumeHighProph}</td><td className="dose-cell">{t.resumeHighTher}</td></tr>
+                    </tbody>
+                  </table>
+                  </div>
+                  <div className="alert alert-info" style={{marginTop:16}}><span className="alert-icon">ℹ️</span><div>{t.resumeNote}</div></div>
+                  <div className="alert alert-purple" style={{marginTop:8}}><span className="alert-icon">💉</span><div>{t.resumeEpiNote}</div></div>
+                </div>
+              </div>
+
+              {/* Visual Timeline */}
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#eef2ff',color:'#4f46e5'}}>📊</div><h2>{lang==='th'?'สรุป Timeline':'Timeline Summary'}</h2></div>
+                <div className="card-body">
+                  <div style={{overflowX:'auto'}}>
+                  <table className="periop-table">
+                    <thead><tr><th>{lang==='th'?'ยา':'Drug'}</th><th>{lang==='th'?'หยุดก่อนผ่า':'Hold preop'}</th><th>{lang==='th'?'เริ่มหลังผ่า (ป้องกัน)':'Resume postop (proph)'}</th><th>{lang==='th'?'เริ่มหลังผ่า (รักษา)':'Resume postop (ther)'}</th></tr></thead>
+                    <tbody>
+                      <tr><td className="sx-type">Enoxaparin (proph)</td><td className="dose-cell">12h</td><td className="dose-cell">6–12h (low) / 24–48h (high)</td><td className="dose-cell">—</td></tr>
+                      <tr><td className="sx-type">Enoxaparin (ther)</td><td className="dose-cell">24h</td><td className="dose-cell">—</td><td className="dose-cell">24h (low) / 48–72h (high)</td></tr>
+                      <tr><td className="sx-type">Tinzaparin / Bemiparin</td><td className="dose-cell">24h</td><td className="dose-cell">6–12h (low) / 24–48h (high)</td><td className="dose-cell">24h (low) / 48–72h (high)</td></tr>
+                      <tr><td className="sx-type">Fondaparinux</td><td className="dose-cell">36–48h</td><td className="dose-cell">6–8h postop</td><td className="dose-cell">48–72h</td></tr>
+                      <tr><td className="sx-type">UFH IV</td><td className="dose-cell">4–6h</td><td className="dose-cell">6–12h</td><td className="dose-cell">12–24h</td></tr>
+                      <tr><td className="sx-type">UFH SC</td><td className="dose-cell">8–12h</td><td className="dose-cell">6–12h</td><td className="dose-cell">—</td></tr>
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* === UFH NO LOADING === */}
+          {periopSub==='noload'&&(
+            <div className="animate-in">
+              <div className="card" style={{border:'2px solid var(--orange-border)'}}>
+                <div className="card-header" style={{background:'linear-gradient(135deg,#ea580c,#c2410c)',borderBottom:'none'}}><div className="card-icon" style={{background:'rgba(255,255,255,.2)',color:'#fff'}}>💧</div><h2 style={{color:'#fff'}}>{t.noLoadTitle}</h2></div>
+                <div className="card-body">
+                  <div className="alert alert-orange"><span className="alert-icon">💡</span><div>{t.noLoadDesc}</div></div>
+
+                  {/* When to omit */}
+                  <div style={{fontSize:'.9rem',fontWeight:700,color:'var(--text)',marginTop:16,marginBottom:12}}>{t.noLoadWhen}</div>
+                  <ul className="clinical-notes">
+                    <li>{t.noLoadInd1}</li>
+                    <li>{t.noLoadInd2}</li>
+                    <li>{t.noLoadInd3}</li>
+                    <li>{t.noLoadInd4}</li>
+                    <li>{t.noLoadInd5}</li>
+                  </ul>
+
+                  {/* Protocol boxes */}
+                  <div style={{fontSize:'.9rem',fontWeight:700,color:'var(--text)',marginTop:24,marginBottom:12}}>{t.noLoadProtocol}</div>
+                  <div className="noload-box"><div className="noload-title">🫀 {lang==='th'?'หลัง Thrombolysis':'Post-Thrombolysis'}</div><div className="noload-content"><strong>{t.noLoadRate1}</strong></div></div>
+                  <div className="noload-box"><div className="noload-title">🏥 Periop Bridging</div><div className="noload-content"><strong>{t.noLoadRate2}</strong></div></div>
+                  <div className="noload-box"><div className="noload-title">❤️ {lang==='th'?'หลังผ่าตัดหัวใจ':'Post-Cardiac Surgery'}</div><div className="noload-content"><strong>{t.noLoadRate3}</strong></div></div>
+                  <div className="noload-box"><div className="noload-title">💊 GP IIb/IIIa</div><div className="noload-content"><strong>{t.noLoadRate4}</strong></div></div>
+
+                  <div className="alert alert-info" style={{marginTop:16}}><span className="alert-icon">📘</span><div>{t.noLoadMonitor}</div></div>
+                  <div className="info-box" style={{marginTop:8}}>{t.noLoadMixNote}</div>
+
+                  {/* Calculator */}
+                  <div style={{fontSize:'.9rem',fontWeight:700,color:'var(--text)',marginTop:24,marginBottom:12}}>🧮 {t.noLoadCalcTitle}</div>
+                  <div className="form-grid cols-3">
+                    <div className="form-group"><label>{t.weight}</label><input value={weight} disabled placeholder="—"/></div>
+                    <div className="form-group"><label>{t.noLoadCalcRate}</label><select value={noLoadRate} onChange={e=>setNoLoadRate(e.target.value)}><option value="10">10 U/kg/hr</option><option value="12">12 U/kg/hr</option><option value="15">15 U/kg/hr</option><option value="18">18 U/kg/hr (standard)</option></select></div>
+                    <div className="form-group"><label>{t.noLoadCalcResult}</label><input value={noLoadCalc?noLoadCalc.rateU+' U/hr':'—'} disabled/></div>
+                  </div>
+                  {noLoadCalc && (
+                    <div className="result-box accent" style={{marginTop:16}}>
+                      <div className="result-label">{t.noLoadCalcResult}</div>
+                      <div className="result-value">{fmtNum(noLoadCalc.rateU)} U/hr</div>
+                      <div className="result-row" style={{marginTop:8}}><span className="label">{t.ufhMixPump100}</span><span className="value">{noLoadCalc.ml100} {t.ufhMixPumpUnit}</span></div>
+                      <div className="result-row"><span className="label">{t.ufhMixPump50}</span><span className="value">{noLoadCalc.ml50} {t.ufhMixPumpUnit}</span></div>
+                      <div style={{marginTop:12,fontSize:'.8rem',color:'var(--text-secondary)',fontStyle:'italic'}}>No bolus — {lang==='th'?'ปรับ aPTT หลัง 6 ชม.':'adjust per aPTT at 6h'}</div>
+                    </div>
+                  )}
+                  {!weight && <div className="alert alert-warning" style={{marginTop:12}}><span className="alert-icon">ℹ️</span><div>{t.crclNeeded}</div></div>}
+                </div>
+              </div>
+
+              {/* Comparison: Loading vs No-Loading */}
+              <div className="card">
+                <div className="card-header"><div className="card-icon" style={{background:'#eef2ff',color:'#4f46e5'}}>⚖️</div><h2>{lang==='th'?'เปรียบเทียบ Loading vs No-Loading':'Loading vs No-Loading Comparison'}</h2></div>
+                <div className="card-body">
+                  <div style={{overflowX:'auto'}}>
+                  <table className="periop-table">
+                    <thead><tr><th></th><th>{lang==='th'?'Standard (มี Loading)':'Standard (with Loading)'}</th><th>{lang==='th'?'No-Loading':'No-Loading'}</th></tr></thead>
+                    <tbody>
+                      <tr><td className="sx-type">Bolus</td><td>80 U/kg IV</td><td style={{color:'var(--danger)',fontWeight:600}}>{lang==='th'?'ไม่ให้':'None'}</td></tr>
+                      <tr><td className="sx-type">Infusion</td><td>18 U/kg/hr</td><td className="dose-cell">10–15 U/kg/hr</td></tr>
+                      <tr><td className="sx-type">Max rate</td><td>{lang==='th'?'ไม่จำกัด (ตาม nomogram)':'Per nomogram'}</td><td className="dose-cell">1,000 U/hr (post-lysis)</td></tr>
+                      <tr><td className="sx-type">{lang==='th'?'ข้อบ่งใช้':'Indication'}</td><td>{lang==='th'?'VTE, ACS มาตรฐาน':'Standard VTE, ACS'}</td><td>{lang==='th'?'หลัง lysis, periop, หลังผ่าตัด':'Post-lysis, periop, post-surgical'}</td></tr>
+                      <tr><td className="sx-type">aPTT</td><td>{lang==='th'?'ตรวจ 6 ชม.':'Check at 6h'}</td><td>{lang==='th'?'ตรวจ 6 ชม.':'Check at 6h'}</td></tr>
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
