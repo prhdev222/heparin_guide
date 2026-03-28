@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
+    color-scheme:light;
     --bg:#f0f4f8;--surface:#fff;--surface-alt:#f7f9fc;
     --border:#e2e8f0;--border-focus:#6366f1;
     --text:#1e293b;--text-secondary:#64748b;--text-muted:#94a3b8;
@@ -27,10 +28,49 @@
     --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
     --radius:12px;--radius-sm:8px;--radius-lg:16px;
   }
+  html[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#0f1419;--surface:#1a2332;--surface-alt:#243044;
+    --border:#334155;--border-focus:#818cf8;
+    --text:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;
+    --accent:#818cf8;--accent-light:#312e81;
+    --danger:#f87171;--danger-light:#3f1d1d;--danger-border:#7f1d1d;
+    --warning:#fbbf24;--warning-light:#422006;--warning-border:#92400e;
+    --success:#34d399;--success-light:#064e3b;--success-border:#065f46;
+    --info:#38bdf8;--info-light:#0c4a6e;--info-border:#0e7490;
+    --orange:#fb923c;--orange-light:#431407;--orange-border:#9a3412;
+    --purple:#c4b5fd;--purple-light:#3b0764;--purple-border:#6d28d9;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --shadow:0 1px 3px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.35);
+    --shadow-md:0 4px 6px rgba(0,0,0,.4);
+  }
+  html[data-theme="dark"] .result-box.accent{border-color:#6366f1;background:var(--accent-light)}
+  html[data-theme="dark"] .alert-danger{background:#450a0a;border-color:#991b1b;color:#fecaca}
+  html[data-theme="dark"] .alert-warning{background:#451a03;border-color:#b45309;color:#fde68a}
+  html[data-theme="dark"] .alert-info{background:#0c4a6e;border-color:#0369a1;color:#bae6fd}
+  html[data-theme="dark"] .alert-orange{background:#431407;border-color:#9a3412;color:#fed7aa}
+  html[data-theme="dark"] .alert-purple{background:#3b0764;border-color:#6d28d9;color:#e9d5ff}
+  html[data-theme="dark"] .badge.danger{background:var(--danger-light);border-color:var(--danger-border);color:#fecaca}
+  html[data-theme="dark"] .se-box{color:#fde68a;border-color:var(--warning-border);background:#451a03}
+  html[data-theme="dark"] .se-box strong{color:#fcd34d}
+  html[data-theme="dark"] .noload-content{color:#fdba74}
+  html[data-theme="dark"] .noload-title{color:#fdba74}
+  html[data-theme="dark"] .order-card{background:linear-gradient(135deg,#064e3b,#052e16);border-color:var(--success-border)}
+  html[data-theme="dark"] .dur-badge{background:var(--info-light);color:#7dd3fc}
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'IBM Plex Sans Thai',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
   .app-container{max-width:1100px;margin:0 auto;padding:24px 16px 80px}
-  .app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .app-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .app-header-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;justify-content:flex-end}
+  .toolbar-group{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 8px;box-shadow:var(--shadow-sm)}
+  .toolbar-label{font-size:.7rem;color:var(--text-muted);white-space:nowrap}
+  .fs-btn{min-width:30px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text);font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;line-height:1.2}
+  .fs-btn:hover{background:var(--accent-light);border-color:var(--accent)}
+  .fs-btn.fs-reset{font-size:.65rem;font-weight:500;min-width:auto;padding:4px 6px}
+  .fs-range{width:80px;height:6px;accent-color:var(--accent);cursor:pointer;vertical-align:middle}
+  .theme-toggle{width:40px;height:34px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;font-size:1.05rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+  .theme-toggle:hover{background:var(--surface-alt)}
+  .theme-toggle.active-dark{background:var(--accent-light);border-color:var(--accent)}
   .app-header h1{font-size:1.5rem;font-weight:700;display:flex;align-items:center;gap:10px}
   .app-header h1 .icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
   .lang-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
@@ -50,7 +90,7 @@
   @media(max-width:480px){.form-grid.cols-2,.form-grid.cols-3,.form-grid.cols-4{grid-template-columns:1fr}}
   .form-group{display:flex;flex-direction:column;gap:6px}
   .form-group label{font-size:.8rem;font-weight:500;color:var(--text-secondary)}
-  .form-group input,.form-group select{font-family:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none;width:100%}
+  .form-group input,.form-group select{font-family:inherit;font-size:max(16px,1rem);padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;outline:none;width:100%}
   .form-group input:focus,.form-group select:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
   .form-group input::placeholder{color:var(--text-muted)}
   .form-hint{font-size:.75rem;color:var(--text-muted)}
@@ -201,7 +241,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const{useState,useMemo,useCallback}=React;
+const{useState,useMemo,useCallback,useEffect}=React;
 function round(v,d=1){if(!Number.isFinite(v))return 0;const f=10**d;return Math.round(v*f)/f}
 function cockcroftGault(a,w,s,sex){if(!a||!w||!s||a<=0||s<=0)return null;const b=((140-a)*w)/(72*s);return sex==='female'?b*.85:b}
 function parseClock(c){if(!/^\d{1,2}:\d{2}$/.test(c))return null;const[h,m]=c.split(':').map(Number);if(h<0||h>23||m<0||m>59)return null;return h+m/60}
@@ -242,7 +282,7 @@ en:{
   otherCauses:'Other causes for thrombocytopenia',ocOpts:['Definite other cause present','Possible other cause','No other apparent cause'],
   score:'Total Score',probability:'Probability',lowProb:'Low probability (0-3)',intProb:'Intermediate probability (4-5)',highProb:'High probability (6-8)',
   activePercent:'active residual',
-  disclaimer:'Clinical decision support only. Verify with current guidelines and clinical judgment. Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',
+  disclaimer:'Clinical decision support only. Verify with current guidelines and clinical judgment. Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',themeLight:'Light',themeDark:'Dark',themeToggleAria:'Switch light or dark theme',fontSize:'Text size',fontSmaller:'Smaller text',fontLarger:'Larger text',fontReset:'Reset to default size',
   // Order
   ordTitle:'Protamine Order',ordDrug:'Drug & Preparation',ordRate:'Rate',ordAllergy:'Allergy Screening',ordMonitor:'Monitoring',ordSE:'Side Effects',
   ordCopy:'Copy Order',ordCopied:'Copied!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'Dilute in',ordNSS:'NSS or D5W 50-100 mL',
@@ -385,7 +425,7 @@ th:{
   otherCauses:'สาเหตุอื่นของ thrombocytopenia',ocOpts:['มีสาเหตุอื่นชัดเจน','อาจมีสาเหตุอื่น','ไม่พบสาเหตุอื่น'],
   score:'คะแนนรวม',probability:'ความน่าจะเป็น',lowProb:'โอกาสต่ำ (0-3)',intProb:'โอกาสปานกลาง (4-5)',highProb:'โอกาสสูง (6-8)',
   activePercent:'ฤทธิ์คงเหลือ',
-  disclaimer:'ใช้เพื่อช่วยตัดสินใจทางคลินิกเท่านั้น ตรวจสอบกับแนวทางปัจจุบันเสมอ Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',
+  disclaimer:'ใช้เพื่อช่วยตัดสินใจทางคลินิกเท่านั้น ตรวจสอบกับแนวทางปัจจุบันเสมอ Ref: Uaprasert N. Blood Adv 2021;5:4521 / ASH 2018 HIT guidelines / Greinacher A. ASH 2023',footerPrefix:'© 2026 directed by ',footerCredit:'Uradev',themeLight:'สว่าง',themeDark:'มืด',themeToggleAria:'สลับโหมดสว่าง/มืด',fontSize:'ขนาดตัวอักษร',fontSmaller:'ตัวเล็กลง',fontLarger:'ตัวใหญ่ขึ้น',fontReset:'ค่าเริ่มต้น',
   ordTitle:'คำสั่งให้ Protamine',ordDrug:'ตัวยาและการเตรียม',ordRate:'อัตราการให้',ordAllergy:'คัดกรองแพ้ยา',ordMonitor:'เฝ้าระวัง',ordSE:'อาการข้างเคียง',
   ordCopy:'คัดลอกคำสั่ง',ordCopied:'คัดลอกแล้ว!',ordName:'Protamine sulfate',ordConc:'10 mg/mL',ordDilute:'ผสมใน',ordNSS:'NSS หรือ D5W 50-100 mL',
   ordIVslow:'IV drip ใน',ordMinUnit:'นาที',ordMaxRate:'สูงสุด: 5 mg/นาที (≤20 mg ทุก 2 นาที)',ordMaxDose:'สูงสุดต่อครั้ง: 50 mg',
@@ -501,6 +541,8 @@ th:{
 
 function App(){
   const[lang,setLang]=useState('th');
+  const[theme,setTheme]=useState(()=>{try{return localStorage.getItem('hg-theme')==='dark'?'dark':'light'}catch(_){return 'light'}});
+  const[fontScale,setFontScale]=useState(()=>{try{const v=parseFloat(localStorage.getItem('hg-font-scale'));return Number.isFinite(v)&&v>=0.85&&v<=1.4?v:1}catch(_){return 1}});
   const[tab,setTab]=useState('reversal');
   const[age,setAge]=useState('');const[weight,setWeight]=useState('');const[scr,setScr]=useState('');const[sex,setSex]=useState('male');
   const[route,setRoute]=useState('iv');const[scenario,setScenario]=useState('major');const[hitSusp,setHitSusp]=useState('no');const[procRisk,setProcRisk]=useState('moderate');
@@ -611,6 +653,11 @@ function App(){
   },[capScore]);
   const[bleedRisk,setBleedRisk]=useState('low');
 
+  useEffect(()=>{try{localStorage.setItem('hg-theme',theme)}catch(_){}},[theme]);
+  useEffect(()=>{try{localStorage.setItem('hg-font-scale',String(fontScale))}catch(_){}},[fontScale]);
+  useEffect(()=>{if(theme==='dark')document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme')},[theme]);
+  useEffect(()=>{document.documentElement.style.fontSize=`${Math.round(16*fontScale*100)/100}px`},[fontScale]);
+
   const noLoadCalc=useMemo(()=>{
     const wt=+weight, r=+noLoadRate;
     if(!wt||wt<=0||!r||r<=0) return null;
@@ -630,9 +677,19 @@ function App(){
     <div className="app-container">
       <div className="app-header">
         <h1><span className="icon">💉</span>{t.title}</h1>
-        <div className="lang-toggle">
-          <button className={lang==='th'?'active':''} onClick={()=>setLang('th')}>ไทย</button>
-          <button className={lang==='en'?'active':''} onClick={()=>setLang('en')}>EN</button>
+        <div className="app-header-tools">
+          <div className="toolbar-group">
+            <span className="toolbar-label">{t.fontSize}</span>
+            <button type="button" className="fs-btn" onClick={()=>setFontScale(s=>Math.max(0.85,round(s-0.05,2)))} aria-label={t.fontSmaller} title={t.fontSmaller}>A−</button>
+            <input type="range" className="fs-range" min={85} max={140} step={5} value={Math.round(fontScale*100)} onChange={e=>setFontScale(+e.target.value/100)} aria-label={t.fontSize} title={t.fontSize}/>
+            <button type="button" className="fs-btn" onClick={()=>setFontScale(s=>Math.min(1.4,round(s+0.05,2)))} aria-label={t.fontLarger} title={t.fontLarger}>A+</button>
+            <button type="button" className="fs-btn fs-reset" onClick={()=>setFontScale(1)} title={t.fontReset}>{Math.round(fontScale*100)}%</button>
+          </div>
+          <button type="button" className={'theme-toggle'+(theme==='dark'?' active-dark':'')} onClick={()=>setTheme(theme==='light'?'dark':'light')} aria-label={t.themeToggleAria} title={theme==='light'?t.themeDark:t.themeLight}>{theme==='light'?'🌙':'☀️'}</button>
+          <div className="lang-toggle">
+            <button className={lang==='th'?'active':''} onClick={()=>setLang('th')}>ไทย</button>
+            <button className={lang==='en'?'active':''} onClick={()=>setLang('en')}>EN</button>
+          </div>
         </div>
       </div>
 
